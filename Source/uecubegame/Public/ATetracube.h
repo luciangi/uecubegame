@@ -43,7 +43,6 @@ protected:
 	UStaticMesh *StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UMaterial *Material;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETetracubeShape3D Shape;
 
