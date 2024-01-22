@@ -31,7 +31,8 @@ enum class ETetracubeShape2D : uint8
 	Z_Shape
 };
 
-UCLASS() class UECUBEGAME_API ATetracube : public AActor
+UCLASS()
+class UECUBEGAME_API ATetracube : public AActor
 {
 	GENERATED_BODY()
 
@@ -43,12 +44,25 @@ protected:
 	UStaticMesh *StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UMaterial *Material;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CubeSize;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FString MaterialColorParameterName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ETetracubeShape3D Shape;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DropSpeed;
 
+	virtual void OnConstruction(const FTransform &Transform) override;
+	virtual void BeginPlay() override;
+
+private:
 	USceneComponent *DefaultSceneRoot;
 	UStaticMeshComponent *Cubes[4];
+	FTimerHandle DropTimerHandle;
 
-	virtual void OnConstruction(const FTransform &Transform);
-	// virtual void BeginPlay() override;
+	void OnDropTimer();
+	bool ShouldDropActor();
+	bool ComponentWillHitWorldStatic(USceneComponent *Component);
+	void DropActor();
 };
