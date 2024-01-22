@@ -5,30 +5,18 @@
 #include "ATetracube.generated.h"
 
 UENUM(BlueprintType)
-enum class ETetracubeShape3D : uint8
+enum class ETetracube3DShape : uint8
 {
-	I_Shape,
-	J_Shape,
-	L_Shape,
-	O_Shape,
-	S_Shape,
-	T_Shape,
-	Z_Shape,
-	Branch_Shape,
-	Right_Screw,
-	LeftScrew
-};
-
-UENUM(BlueprintType)
-enum class ETetracubeShape2D : uint8
-{
-	I_Shape,
-	J_Shape,
-	L_Shape,
-	O_Shape,
-	S_Shape,
-	T_Shape,
-	Z_Shape
+	IShape,
+	JShape,
+	LShape,
+	OShape,
+	SShape,
+	TShape,
+	ZShape,
+	BranchShape,
+	RightScrewShape,
+	LeftScrewShape
 };
 
 UCLASS()
@@ -40,16 +28,18 @@ public:
 	ATetracube();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UStaticMesh *StaticMesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UMaterial *Material;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
+	UStaticMesh *CubeStaticMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
+	UMaterial *CubeMaterial;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	float CubeSize;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
+	FString CubeMaterialColorParameterName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FString MaterialColorParameterName;
+	TSubclassOf<ATetracube> ChildBlueprintClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ETetracubeShape3D Shape;
+	FVector SpawnLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DropSpeed;
 
@@ -57,12 +47,19 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	ETetracube3DShape Shape;
 	USceneComponent *DefaultSceneRoot;
 	UStaticMeshComponent *Cubes[4];
 	FTimerHandle DropTimerHandle;
 
+	static ETetracube3DShape GetRandomTetracube3DShape()
+	{
+		uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
+		return static_cast<ETetracube3DShape>(RandomIndex);
+	};
 	void OnDropTimer();
 	bool ShouldDropActor();
 	bool ComponentWillHitWorldStatic(USceneComponent *Component);
 	void DropActor();
+	void SpawnNewInstance();
 };

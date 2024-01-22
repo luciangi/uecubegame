@@ -2,6 +2,8 @@
 
 ATetracube::ATetracube()
 {
+	Shape = ATetracube::GetRandomTetracube3DShape();
+
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	SetRootComponent(DefaultSceneRoot);
 
@@ -21,70 +23,70 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 
 	switch (Shape)
 	{
-	case ETetracubeShape3D::I_Shape:
+	case ETetracube3DShape::IShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 2 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 3 * CubeSize));
 		BaseColor = FVector(0.057805f, 1.f, 1.f);
 		break;
-	case ETetracubeShape3D::J_Shape:
+	case ETetracube3DShape::JShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, -1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 2 * CubeSize));
 		BaseColor = FVector(0.f, 0.f, 1.f);
 		break;
-	case ETetracubeShape3D::L_Shape:
+	case ETetracube3DShape::LShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 2 * CubeSize));
 		BaseColor = FVector(1.f, 0.219526f, 0.f);
 		break;
-	case ETetracubeShape3D::O_Shape:
+	case ETetracube3DShape::OShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(1.f, 1.f, 0.f);
 		break;
-	case ETetracubeShape3D::S_Shape:
+	case ETetracube3DShape::SShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, -1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(0.f, 1.f, 0.f);
 		break;
-	case ETetracubeShape3D::T_Shape:
+	case ETetracube3DShape::TShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, -1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(1.f, 0.f, 1.f);
 		break;
-	case ETetracubeShape3D::Z_Shape:
+	case ETetracube3DShape::ZShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, -1 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(1.f, 0.f, 0.f);
 		break;
-	case ETetracubeShape3D::Branch_Shape:
+	case ETetracube3DShape::BranchShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(1 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(0.215861f, 0.029557f, 0.f);
 		break;
-	case ETetracubeShape3D::Right_Screw:
+	case ETetracube3DShape::RightScrewShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(-1 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[3]->SetRelativeLocation(FVector(-1 * CubeSize, 0 * CubeSize, 1 * CubeSize));
 		BaseColor = FVector(0.051269f, 0.051269f, 0.051269f);
 		break;
-	case ETetracubeShape3D::LeftScrew:
+	case ETetracube3DShape::LeftScrewShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
 		Cubes[1]->SetRelativeLocation(FVector(0 * CubeSize, 1 * CubeSize, 0 * CubeSize));
 		Cubes[2]->SetRelativeLocation(FVector(-1 * CubeSize, 0 * CubeSize, 0 * CubeSize));
@@ -95,10 +97,12 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 
 	for (int i = 0; i < 4; i++)
 	{
-		Cubes[i]->SetStaticMesh(StaticMesh);
-		Cubes[i]->SetMaterial(0, Material);
-		Cubes[i]->SetVectorParameterValueOnMaterials(FName(*MaterialColorParameterName), BaseColor);
+		Cubes[i]->SetStaticMesh(CubeStaticMesh);
+		Cubes[i]->SetMaterial(0, CubeMaterial);
+		Cubes[i]->SetVectorParameterValueOnMaterials(FName(*CubeMaterialColorParameterName), BaseColor);
 	}
+
+	SetActorLocation(SpawnLocation);
 }
 
 void ATetracube::BeginPlay()
@@ -118,7 +122,7 @@ void ATetracube::OnDropTimer()
 	{
 		GetWorldTimerManager().ClearTimer(DropTimerHandle);
 
-		FTransform NewActorTransform = GetActorTransform();
+		ATetracube *NewActor = GetWorld()->SpawnActor<ATetracube>(ChildBlueprintClass, FTransform::Identity);
 	}
 }
 
