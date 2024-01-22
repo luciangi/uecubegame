@@ -33,14 +33,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	UMaterial *CubeMaterial;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
-	float CubeSize;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	FString CubeMaterialColorParameterName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
+	float CubeSize;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<ATetracube> ChildBlueprintClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ATetracube> TetracubeBlueprintClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FVector SpawnLocation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float DropSpeed;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
@@ -48,18 +48,14 @@ protected:
 
 private:
 	ETetracube3DShape Shape;
-	USceneComponent *DefaultSceneRoot;
+	FVector Color;
 	UStaticMeshComponent *Cubes[4];
 	FTimerHandle DropTimerHandle;
 
-	static ETetracube3DShape GetRandomTetracube3DShape()
-	{
-		uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
-		return static_cast<ETetracube3DShape>(RandomIndex);
-	};
+	static ETetracube3DShape GetRandomTetracube3DShape();
 	void OnDropTimer();
 	bool ShouldDropActor();
-	bool ComponentWillHitWorldStatic(USceneComponent *Component);
+	bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube);
 	void DropActor();
-	void SpawnNewInstance();
+	void SetCubesCollisionToWorldStatic();
 };
