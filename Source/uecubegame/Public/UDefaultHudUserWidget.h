@@ -12,15 +12,15 @@ class UECUBEGAME_API UDefaultHudUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void setTopValue(int top);
-	void setScoreValue(int score);
-	void setLevelValue(int level);
+	void SetTopValue(int NewTop);
+	void SetScoreValue(int NewScore);
+	void SetLevelValue(int NewLevel);
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* TopValueText;
+	UTextBlock *TopValueText;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ScoreValueText;
+	UTextBlock *ScoreValueText;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* LevelValueText;
+	UTextBlock *LevelValueText;
 };

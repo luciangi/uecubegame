@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ACube.h"
 #include "ATetracube.generated.h"
 
 UENUM(BlueprintType)
@@ -27,6 +28,13 @@ class UECUBEGAME_API ATetracube : public AActor
 public:
 	ATetracube();
 
+	void SetShape(ETetracube3DShape NewShape);
+	void SetSpawnLocation(FVector NewSpawnLocation);
+	void SetDropSpeed(float NewDropSpeed);
+
+	static ETetracube3DShape GetRandomTetracube3DShape();
+	static void SpawnNewTetracube(UWorld *World, TSubclassOf<ATetracube> TetracubeBlueprintClass, FVector SpawnLocation, float DropSpeed);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	UStaticMesh *CubeStaticMesh;
@@ -39,20 +47,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FVector SpawnLocation;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	float DropSpeed;
+	TSubclassOf<ACube> CubeBlueprintClass;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 	virtual void BeginPlay() override;
 
 private:
 	ETetracube3DShape Shape;
+	FVector SpawnLocation;
+	float DropSpeed;
 	FVector Color;
 	UStaticMeshComponent *Cubes[4];
 	FTimerHandle DropTimerHandle;
 
-	static ETetracube3DShape GetRandomTetracube3DShape();
 	void OnDropTimer();
 	bool ShouldDropActor();
 	bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube);

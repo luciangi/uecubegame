@@ -11,8 +11,42 @@ ATetracube::ATetracube()
 		Cubes[i] = CreateDefaultSubobject<UStaticMeshComponent>(FName(*SubobjectName));
 		Cubes[i]->SetupAttachment(DefaultSceneRoot);
 	}
+}
 
-	Shape = ATetracube::GetRandomTetracube3DShape();
+void ATetracube::SetShape(ETetracube3DShape NewShape)
+{
+	Shape = NewShape;
+}
+
+void ATetracube::SetSpawnLocation(FVector NewSpawnLocation)
+{
+	SpawnLocation = NewSpawnLocation;
+}
+
+void ATetracube::SetDropSpeed(float NewDropSpeed)
+{
+	DropSpeed = NewDropSpeed;
+}
+
+ETetracube3DShape ATetracube::GetRandomTetracube3DShape()
+{
+	uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
+	return static_cast<ETetracube3DShape>(RandomIndex);
+};
+
+void ATetracube::SpawnNewTetracube(UWorld *World, TSubclassOf<ATetracube> TetracubeBlueprintClass, FVector SpawnLocation, float DropSpeed)
+{
+	FTransform NewTetracubeTransform = FTransform::Identity;
+	NewTetracubeTransform.SetLocation(SpawnLocation);
+	ATetracube *NewTetracube = World->SpawnActorDeferred<ATetracube>(TetracubeBlueprintClass, NewTetracubeTransform);
+
+	if (NewTetracube)
+	{
+		NewTetracube->SetShape(ATetracube::GetRandomTetracube3DShape());
+		NewTetracube->SetSpawnLocation(SpawnLocation);
+		NewTetracube->SetDropSpeed(DropSpeed);
+		NewTetracube->FinishSpawning(NewTetracubeTransform);
+	}
 }
 
 void ATetracube::OnConstruction(const FTransform &Transform)
@@ -110,12 +144,6 @@ void ATetracube::BeginPlay()
 	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
 }
 
-ETetracube3DShape ATetracube::GetRandomTetracube3DShape()
-{
-	uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
-	return static_cast<ETetracube3DShape>(RandomIndex);
-};
-
 void ATetracube::OnDropTimer()
 {
 	if (ShouldDropActor())
@@ -125,8 +153,21 @@ void ATetracube::OnDropTimer()
 	else
 	{
 		GetWorldTimerManager().ClearTimer(DropTimerHandle);
-		SetCubesCollisionToWorldStatic();
-		GetWorld()->SpawnActor<ATetracube>(TetracubeBlueprintClass, FTransform::Identity);
+
+		for (UStaticMeshComponent *Cube : Cubes)
+		{
+			FTransform CubeTransform = Cube->GetComponentTransform();
+			ACube *WorldStaticCube = GetWorld()->SpawnActorDeferred<ACube>(CubeBlueprintClass, CubeTransform);
+
+			if (WorldStaticCube)
+			{
+				WorldStaticCube->SetColor(Color);
+				WorldStaticCube->FinishSpawning(CubeTransform);
+			}
+		}
+
+		SpawnNewTetracube(GetWorld(), TetracubeBlueprintClass, SpawnLocation, DropSpeed);
+		Destroy();
 	}
 }
 
@@ -171,12 +212,4 @@ void ATetracube::DropActor()
 	FVector NewLocation = GetActorLocation();
 	NewLocation.Z -= CubeSize;
 	SetActorLocation(NewLocation);
-}
-
-void ATetracube::SetCubesCollisionToWorldStatic()
-{
-	for (UStaticMeshComponent *Cube : Cubes)
-	{
-		Cube->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
-	}
 }
