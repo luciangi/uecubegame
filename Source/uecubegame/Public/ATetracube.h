@@ -20,6 +20,8 @@ enum class ETetracube3DShape : uint8
 	LeftScrewShape
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTetracubeCollisionEvent);
+
 UCLASS()
 class UECUBEGAME_API ATetracube : public AActor
 {
@@ -28,12 +30,11 @@ class UECUBEGAME_API ATetracube : public AActor
 public:
 	ATetracube();
 
-	void SetShape(ETetracube3DShape NewShape);
-	void SetSpawnLocation(FVector NewSpawnLocation);
 	void SetDropSpeed(float NewDropSpeed);
 
-	static ETetracube3DShape GetRandomTetracube3DShape();
-	static void SpawnNewTetracube(UWorld *World, TSubclassOf<ATetracube> TetracubeBlueprintClass, FVector SpawnLocation, float DropSpeed);
+	FTetracubeCollisionEvent &GetOnTetracubeCollision();
+
+	void StartDropping();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
@@ -50,15 +51,16 @@ protected:
 	TSubclassOf<ACube> CubeBlueprintClass;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
-	virtual void BeginPlay() override;
 
 private:
-	ETetracube3DShape Shape;
-	FVector SpawnLocation;
 	float DropSpeed;
 	FVector Color;
 	UStaticMeshComponent *Cubes[4];
 	FTimerHandle DropTimerHandle;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FTetracubeCollisionEvent OnTetracubeCollision;
+
+	static ETetracube3DShape GetRandomTetracube3DShape();
 
 	void OnDropTimer();
 	bool ShouldDropActor();

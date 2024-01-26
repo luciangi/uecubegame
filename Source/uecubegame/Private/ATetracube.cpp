@@ -13,47 +13,26 @@ ATetracube::ATetracube()
 	}
 }
 
-void ATetracube::SetShape(ETetracube3DShape NewShape)
-{
-	Shape = NewShape;
-}
-
-void ATetracube::SetSpawnLocation(FVector NewSpawnLocation)
-{
-	SpawnLocation = NewSpawnLocation;
-}
-
 void ATetracube::SetDropSpeed(float NewDropSpeed)
 {
 	DropSpeed = NewDropSpeed;
 }
 
-ETetracube3DShape ATetracube::GetRandomTetracube3DShape()
+FTetracubeCollisionEvent &ATetracube::GetOnTetracubeCollision()
 {
-	uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
-	return static_cast<ETetracube3DShape>(RandomIndex);
-};
+	return OnTetracubeCollision;
+}
 
-void ATetracube::SpawnNewTetracube(UWorld *World, TSubclassOf<ATetracube> TetracubeBlueprintClass, FVector SpawnLocation, float DropSpeed)
+void ATetracube::StartDropping()
 {
-	FTransform NewTetracubeTransform = FTransform::Identity;
-	NewTetracubeTransform.SetLocation(SpawnLocation);
-	ATetracube *NewTetracube = World->SpawnActorDeferred<ATetracube>(TetracubeBlueprintClass, NewTetracubeTransform);
-
-	if (NewTetracube)
-	{
-		NewTetracube->SetShape(ATetracube::GetRandomTetracube3DShape());
-		NewTetracube->SetSpawnLocation(SpawnLocation);
-		NewTetracube->SetDropSpeed(DropSpeed);
-		NewTetracube->FinishSpawning(NewTetracubeTransform);
-	}
+	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
 }
 
 void ATetracube::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);
 
-	switch (Shape)
+	switch (ATetracube::GetRandomTetracube3DShape())
 	{
 	case ETetracube3DShape::IShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
@@ -133,16 +112,13 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 		Cubes[i]->SetMaterial(0, CubeMaterial);
 		Cubes[i]->SetVectorParameterValueOnMaterials(FName(*CubeMaterialColorParameterName), Color);
 	}
-
-	SetActorLocation(SpawnLocation);
 }
 
-void ATetracube::BeginPlay()
+ETetracube3DShape ATetracube::GetRandomTetracube3DShape()
 {
-	Super::BeginPlay();
-
-	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
-}
+	uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
+	return static_cast<ETetracube3DShape>(RandomIndex);
+};
 
 void ATetracube::OnDropTimer()
 {
@@ -166,8 +142,7 @@ void ATetracube::OnDropTimer()
 			}
 		}
 
-		SpawnNewTetracube(GetWorld(), TetracubeBlueprintClass, SpawnLocation, DropSpeed);
-		Destroy();
+		OnTetracubeCollision.Broadcast();
 	}
 }
 

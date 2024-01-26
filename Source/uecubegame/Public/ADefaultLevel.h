@@ -14,9 +14,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FVector SpawnLocation;
+	FVector CurrentTetracubeSpawnLocation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FVector NextTetracubeSpawnLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float DropSpeed;
 
 	virtual void BeginPlay() override;
+
+private:
+	ATetracube *CurrentTetracube;
+	ATetracube *NextTetracube;
+
+	UFUNCTION()
+	void HandleTetracubeCollisionEvent();
+
+	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
+	void StageTetracube(ATetracube *tetracube);
 };
