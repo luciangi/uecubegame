@@ -26,15 +26,19 @@ class UECUBEGAME_API ATetracube : public AActor
 	GENERATED_BODY()
 
 public:
+	/** Constructors */
 	ATetracube();
+
+	/** Getters and Setters */
+	FTetracubeCollisionEvent &GetOnTetracubeCollision();
 
 	void SetDropSpeed(float NewDropSpeed);
 
-	FTetracubeCollisionEvent &GetOnTetracubeCollision();
-
+	/** Public */
 	void StartDropping();
 
 protected:
+	/** Blueprint */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	UStaticMesh *CubeStaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
@@ -58,11 +62,10 @@ private:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FTetracubeCollisionEvent OnTetracubeCollision;
 
-	static ETetracube3DShape GetRandomTetracube3DShape();
-
 	void OnDropTimer();
-	bool ShouldDropActor();
-	bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube);
-	void DropActor();
+    void SpawnWorldStaticCubes();
+    bool WillHitWorldStatic();
+    bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube);
+    void Drop();
 	void SetCubesCollisionToWorldStatic();
 };

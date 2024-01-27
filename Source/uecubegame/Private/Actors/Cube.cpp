@@ -1,5 +1,6 @@
 #include "Actors/Cube.h"
 
+/** Constructors */
 ACube::ACube()
 {
 	USceneComponent *DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
@@ -10,11 +11,13 @@ ACube::ACube()
 	Cube->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
 }
 
+/** Getters and Setters */
 void ACube::SetColor(FVector NewColor)
 {
 	Color = NewColor;
 }
 
+/** Blueprint */
 void ACube::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);

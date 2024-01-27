@@ -1,6 +1,7 @@
 #include "UI/DefaultHudUserWidget.h"
 #include "Components/TextBlock.h"
 
+/** Getters and Setters */
 void UDefaultHudUserWidget::SetTopValue(int NewTop)
 {
     TopValueText->SetText(FText::AsNumber(NewTop));

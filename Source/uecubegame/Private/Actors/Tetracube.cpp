@@ -1,5 +1,6 @@
 #include "Actors/Tetracube.h"
 
+/** Constructors */
 ATetracube::ATetracube()
 {
 	USceneComponent *DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
@@ -13,26 +14,30 @@ ATetracube::ATetracube()
 	}
 }
 
-void ATetracube::SetDropSpeed(float NewDropSpeed)
-{
-	DropSpeed = NewDropSpeed;
-}
-
+/** Getters and Setters */
 FTetracubeCollisionEvent &ATetracube::GetOnTetracubeCollision()
 {
 	return OnTetracubeCollision;
 }
 
+void ATetracube::SetDropSpeed(float NewDropSpeed)
+{
+	DropSpeed = NewDropSpeed;
+}
+
+/** Public */
 void ATetracube::StartDropping()
 {
 	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
 }
 
+/** Blueprint */
 void ATetracube::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);
 
-	switch (ATetracube::GetRandomTetracube3DShape())
+	ETetracube3DShape Shape = static_cast<ETetracube3DShape>(FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape)));
+	switch (Shape)
 	{
 	case ETetracube3DShape::IShape:
 		Cubes[0]->SetRelativeLocation(FVector(0 * CubeSize, 0 * CubeSize, 0 * CubeSize));
@@ -116,50 +121,48 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 	}
 }
 
-ETetracube3DShape ATetracube::GetRandomTetracube3DShape()
-{
-	uint8 RandomIndex = FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape));
-	return static_cast<ETetracube3DShape>(RandomIndex);
-};
-
+/** Private */
 void ATetracube::OnDropTimer()
 {
-	if (ShouldDropActor())
+	if (WillHitWorldStatic())
 	{
-		DropActor();
+		GetWorldTimerManager().ClearTimer(DropTimerHandle);
+		SpawnWorldStaticCubes();
+		Destroy();
+		OnTetracubeCollision.Broadcast();
 	}
 	else
 	{
-		GetWorldTimerManager().ClearTimer(DropTimerHandle);
-
-		for (UStaticMeshComponent *Cube : Cubes)
-		{
-			FTransform CubeTransform = Cube->GetComponentTransform();
-			ACube *WorldStaticCube = GetWorld()->SpawnActorDeferred<ACube>(CubeBlueprintClass, CubeTransform);
-
-			if (WorldStaticCube)
-			{
-				WorldStaticCube->SetColor(Color);
-				WorldStaticCube->FinishSpawning(CubeTransform);
-			}
-		}
-
-		OnTetracubeCollision.Broadcast();
+		Drop();
 	}
 }
 
-bool ATetracube::ShouldDropActor()
+void ATetracube::SpawnWorldStaticCubes()
+{
+	for (UStaticMeshComponent *Cube : Cubes)
+	{
+		FTransform CubeTransform = Cube->GetComponentTransform();
+		ACube *WorldStaticCube = GetWorld()->SpawnActorDeferred<ACube>(CubeBlueprintClass, CubeTransform);
+
+		if (WorldStaticCube)
+		{
+			WorldStaticCube->SetColor(Color);
+			WorldStaticCube->FinishSpawning(CubeTransform);
+		}
+	}
+}
+bool ATetracube::WillHitWorldStatic()
 {
 	for (UStaticMeshComponent *Cube : Cubes)
 	{
 
 		if (CubeWillHitWorldStatic(Cube))
 		{
-			return false;
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube)
@@ -184,7 +187,7 @@ bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube)
 		CollisionParams);
 }
 
-void ATetracube::DropActor()
+void ATetracube::Drop()
 {
 	FVector NewLocation = GetActorLocation();
 	NewLocation.Z -= CubeSize;

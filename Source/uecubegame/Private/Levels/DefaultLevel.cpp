@@ -1,23 +1,23 @@
 #include "Levels/DefaultLevel.h"
 
+/** Blueprint */
 void ADefaultLevel::BeginPlay()
 {
     Super::BeginPlay();
 
-    NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
-
     StageTetracube(SpawnNewTetracube(CurrentTetracubeSpawnLocation));
+    NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 }
 
 void ADefaultLevel::HandleTetracubeCollisionEvent()
 {
     CurrentTetracube->GetOnTetracubeCollision().RemoveDynamic(this, &ADefaultLevel::HandleTetracubeCollisionEvent);
-    CurrentTetracube->Destroy();
-    StageTetracube(NextTetracube);
 
+    StageTetracube(NextTetracube);
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 }
 
+/** Private */
 ATetracube *ADefaultLevel::SpawnNewTetracube(FVector SpawnLocation)
 {
     FTransform NewTetracubeTransform = FTransform::Identity;
@@ -34,11 +34,11 @@ ATetracube *ADefaultLevel::SpawnNewTetracube(FVector SpawnLocation)
     return NewTetracube;
 }
 
-void ADefaultLevel::StageTetracube(ATetracube *tetracube)
+void ADefaultLevel::StageTetracube(ATetracube *Tetracube)
 {
-    tetracube->GetOnTetracubeCollision().AddDynamic(this, &ADefaultLevel::HandleTetracubeCollisionEvent);
-    tetracube->SetActorLocation(CurrentTetracubeSpawnLocation);
-    tetracube->StartDropping();
+    Tetracube->GetOnTetracubeCollision().AddDynamic(this, &ADefaultLevel::HandleTetracubeCollisionEvent);
+    Tetracube->SetActorLocation(CurrentTetracubeSpawnLocation);
+    Tetracube->StartDropping();
 
-    CurrentTetracube = tetracube;
+    CurrentTetracube = Tetracube;
 }

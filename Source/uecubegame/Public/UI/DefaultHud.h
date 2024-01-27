@@ -9,8 +9,10 @@ class UECUBEGAME_API ADefaultHud : public AHUD
 	GENERATED_BODY()
 
 public:
+	/** Constructors */
 	ADefaultHud();
 
+	/** Blueprint */
 	virtual void DrawHUD() override;
 
 private:

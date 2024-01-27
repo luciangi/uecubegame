@@ -10,6 +10,7 @@ class UECUBEGAME_API ADefaultLevel : public ALevelScriptActor
 	GENERATED_BODY()
 
 protected:
+	/** Blueprint */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -21,13 +22,13 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void HandleTetracubeCollisionEvent();
+
 private:
 	ATetracube *CurrentTetracube;
 	ATetracube *NextTetracube;
 
-	UFUNCTION()
-	void HandleTetracubeCollisionEvent();
-
 	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
-	void StageTetracube(ATetracube *tetracube);
+	void StageTetracube(ATetracube *Tetracube);
 };

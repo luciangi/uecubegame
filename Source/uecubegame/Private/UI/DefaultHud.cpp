@@ -1,6 +1,7 @@
 #include "UI/DefaultHud.h"
 #include "UI/DefaultHudUserWidget.h"
 
+/** Constructors */
 ADefaultHud::ADefaultHud()
 {
     static ConstructorHelpers::FClassFinder<UUserWidget> HudWidgetClassFinder(TEXT("/Game/Blueprints/B_HudUserWidget"));
@@ -10,6 +11,7 @@ ADefaultHud::ADefaultHud()
     }
 }
 
+/** Blueprint */
 void ADefaultHud::DrawHUD()
 {
     Super::DrawHUD();
