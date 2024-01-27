@@ -106,11 +106,13 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 		break;
 	}
 
+	UMaterialInstanceDynamic *DynamicMaterialInstance = UMaterialInstanceDynamic::Create(CubeMaterialInstance, this);
+	DynamicMaterialInstance->SetVectorParameterValue(FName(*CubeMaterialInstanceColorParameterName), Color);
+
 	for (int i = 0; i < 4; i++)
 	{
 		Cubes[i]->SetStaticMesh(CubeStaticMesh);
-		Cubes[i]->SetMaterial(0, CubeMaterial);
-		Cubes[i]->SetVectorParameterValueOnMaterials(FName(*CubeMaterialColorParameterName), Color);
+		Cubes[i]->SetMaterial(0, DynamicMaterialInstance);
 	}
 }
 

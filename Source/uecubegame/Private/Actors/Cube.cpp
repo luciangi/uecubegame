@@ -20,6 +20,6 @@ void ACube::OnConstruction(const FTransform &Transform)
 	Super::OnConstruction(Transform);
 
 	Cube->SetStaticMesh(StaticMesh);
-	Cube->SetMaterial(0, Material);
-	Cube->SetVectorParameterValueOnMaterials(FName(*MaterialColorParameterName), Color);
+	Cube->SetMaterial(0, MaterialInstance);
+	Cube->SetVectorParameterValueOnMaterials(FName(*MaterialInstanceColorParameterName), Color);
 }

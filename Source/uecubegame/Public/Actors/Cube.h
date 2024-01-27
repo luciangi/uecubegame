@@ -16,9 +16,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UStaticMesh *StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UMaterial *Material;
+	UMaterialInstance *MaterialInstance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FString MaterialColorParameterName;
+	FString MaterialInstanceColorParameterName;
 
 	UStaticMeshComponent *Cube;
 

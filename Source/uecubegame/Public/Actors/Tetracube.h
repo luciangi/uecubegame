@@ -38,9 +38,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	UStaticMesh *CubeStaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
-	UMaterial *CubeMaterial;
+	UMaterialInstance *CubeMaterialInstance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
-	FString CubeMaterialColorParameterName;
+	FString CubeMaterialInstanceColorParameterName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cube")
 	float CubeSize;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
