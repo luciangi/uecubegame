@@ -1,8 +1,6 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "ACube.generated.h"
+#include "Cube.generated.h"
 
 UCLASS()
 class UECUBEGAME_API ACube : public AActor

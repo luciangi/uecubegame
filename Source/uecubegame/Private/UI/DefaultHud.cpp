@@ -1,5 +1,5 @@
-#include "DefaultHud.h"
-#include "UDefaultHudUserWidget.h"
+#include "UI/DefaultHud.h"
+#include "UI/DefaultHudUserWidget.h"
 
 ADefaultHud::ADefaultHud()
 {
