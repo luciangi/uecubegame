@@ -12,14 +12,11 @@ class UECUBEGAME_API UDefaultHudUserWidget : public UUserWidget
 
 public:
 	/** Getters and Setters */
-	void SetTopValue(int NewTop);
 	void SetScoreValue(int NewScore);
 	void SetLevelValue(int NewLevel);
 
 private:
 	/** Blueprint */
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock *TopValueText;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock *ScoreValueText;
 	UPROPERTY(meta = (BindWidget))

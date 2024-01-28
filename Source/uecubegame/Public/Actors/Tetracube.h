@@ -36,6 +36,11 @@ public:
 
 	/** Public */
 	void StartDropping();
+	void Rotate();
+	void MoveLeft();
+	void MoveRight();
+	void Accelerate();
+	void Decelerate();
 
 protected:
 	/** Blueprint */
@@ -63,9 +68,10 @@ private:
 	FTetracubeCollisionEvent OnTetracubeCollision;
 
 	void OnDropTimer();
-    void SpawnWorldStaticCubes();
-    bool WillHitWorldStatic();
-    bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube);
-    void Drop();
-	void SetCubesCollisionToWorldStatic();
+	void SpawnWorldStaticCubes();
+	bool WillHitWorldStatic(FTransform Transform);
+	bool CubeWillHitWorldStatic(UStaticMeshComponent *Cube, FTransform Transform);
+	void AccelerateTime();
+	void ResetTime();
+	void SetActorTransform(FTransform NewTransform);
 };

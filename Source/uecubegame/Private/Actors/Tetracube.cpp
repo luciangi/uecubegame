@@ -1,4 +1,5 @@
 #include "Actors/Tetracube.h"
+#include "Kismet/GameplayStatics.h"
 
 /** Constructors */
 ATetracube::ATetracube()
@@ -29,6 +30,51 @@ void ATetracube::SetDropSpeed(float NewDropSpeed)
 void ATetracube::StartDropping()
 {
 	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
+}
+
+void ATetracube::Rotate()
+{
+	FRotator CurrentRotation = GetActorRotation();
+	FTransform NewTransform = FTransform::Identity;
+	NewTransform.SetLocation(FVector(0.0f, 0.0f, -1 * CubeSize));
+
+	AddActorLocalRotation(FRotator(0.0f, 0.0f, 90.0f));
+	if (WillHitWorldStatic(NewTransform))
+	{
+		SetActorRotation(CurrentRotation);
+	}
+}
+
+void ATetracube::MoveLeft()
+{
+	FTransform NewTransform = FTransform::Identity;
+	NewTransform.SetLocation(FVector(0.0f, -1 * CubeSize, 0.0f));
+
+	if (!WillHitWorldStatic(NewTransform))
+	{
+		SetActorTransform(NewTransform);
+	}
+}
+
+void ATetracube::MoveRight()
+{
+	FTransform NewTransform = FTransform::Identity;
+	NewTransform.SetLocation(FVector(0.0f, 1 * CubeSize, 0.0f));
+
+	if (!WillHitWorldStatic(NewTransform))
+	{
+		SetActorTransform(NewTransform);
+	}
+}
+
+void ATetracube::Accelerate()
+{
+	AccelerateTime();
+}
+
+void ATetracube::Decelerate()
+{
+	ResetTime();
 }
 
 /** Blueprint */
@@ -124,16 +170,20 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 /** Private */
 void ATetracube::OnDropTimer()
 {
-	if (WillHitWorldStatic())
+	FTransform NewTransform = FTransform::Identity;
+	NewTransform.SetLocation(FVector(0.0f, 0.0f, -1 * CubeSize));
+
+	if (WillHitWorldStatic(NewTransform))
 	{
 		GetWorldTimerManager().ClearTimer(DropTimerHandle);
 		SpawnWorldStaticCubes();
+		ResetTime();
 		Destroy();
 		OnTetracubeCollision.Broadcast();
 	}
 	else
 	{
-		Drop();
+		SetActorTransform(NewTransform);
 	}
 }
 
@@ -151,12 +201,12 @@ void ATetracube::SpawnWorldStaticCubes()
 		}
 	}
 }
-bool ATetracube::WillHitWorldStatic()
+bool ATetracube::WillHitWorldStatic(FTransform Transform)
 {
 	for (UStaticMeshComponent *Cube : Cubes)
 	{
 
-		if (CubeWillHitWorldStatic(Cube))
+		if (CubeWillHitWorldStatic(Cube, Transform))
 		{
 			return true;
 		}
@@ -165,13 +215,12 @@ bool ATetracube::WillHitWorldStatic()
 	return false;
 }
 
-bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube)
+bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube, FTransform Transform)
 {
 	FHitResult HitResult;
 
 	FVector StartLocation = Cube->GetComponentLocation();
-	FVector EndLocation = StartLocation;
-	EndLocation.Z -= CubeSize;
+	FVector EndLocation = StartLocation + Transform.GetLocation();
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
@@ -187,9 +236,18 @@ bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube)
 		CollisionParams);
 }
 
-void ATetracube::Drop()
+void ATetracube::AccelerateTime()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 20.0f);
+}
+
+void ATetracube::ResetTime()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+}
+
+void ATetracube::SetActorTransform(FTransform NewTransform)
 {
 	FVector NewLocation = GetActorLocation();
-	NewLocation.Z -= CubeSize;
-	SetActorLocation(NewLocation);
+	SetActorLocation(NewLocation + NewTransform.GetLocation());
 }

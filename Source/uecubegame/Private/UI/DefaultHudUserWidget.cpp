@@ -2,11 +2,6 @@
 #include "Components/TextBlock.h"
 
 /** Getters and Setters */
-void UDefaultHudUserWidget::SetTopValue(int NewTop)
-{
-    TopValueText->SetText(FText::AsNumber(NewTop));
-}
-
 void UDefaultHudUserWidget::SetScoreValue(int NewScore)
 {
     ScoreValueText->SetText(FText::AsNumber(NewScore));
