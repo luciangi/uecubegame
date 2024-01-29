@@ -7,11 +7,12 @@ ATetracube::ATetracube()
 	USceneComponent *DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	SetRootComponent(DefaultSceneRoot);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i <= 4; i++)
 	{
 		FString SubobjectName = "Cube" + FString::Printf(TEXT("%d"), i);
-		Cubes[i] = CreateDefaultSubobject<UStaticMeshComponent>(FName(*SubobjectName));
-		Cubes[i]->SetupAttachment(DefaultSceneRoot);
+		UStaticMeshComponent *Cube = CreateDefaultSubobject<UStaticMeshComponent>(FName(*SubobjectName));
+		Cube->SetupAttachment(DefaultSceneRoot);
+		Cubes.Add(Cube);
 	}
 }
 
@@ -160,10 +161,10 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 	UMaterialInstanceDynamic *DynamicMaterialInstance = UMaterialInstanceDynamic::Create(CubeMaterialInstance, this);
 	DynamicMaterialInstance->SetVectorParameterValue(FName(*CubeMaterialInstanceColorParameterName), Color);
 
-	for (int i = 0; i < 4; i++)
+	for (UStaticMeshComponent *Cube : Cubes)
 	{
-		Cubes[i]->SetStaticMesh(CubeStaticMesh);
-		Cubes[i]->SetMaterial(0, DynamicMaterialInstance);
+		Cube->SetStaticMesh(CubeStaticMesh);
+		Cube->SetMaterial(0, DynamicMaterialInstance);
 	}
 }
 

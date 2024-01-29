@@ -62,7 +62,7 @@ protected:
 private:
 	float DropSpeed;
 	FVector Color;
-	UStaticMeshComponent *Cubes[4];
+	TArray<UStaticMeshComponent*> Cubes;
 	FTimerHandle DropTimerHandle;
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FTetracubeCollisionEvent OnTetracubeCollision;
