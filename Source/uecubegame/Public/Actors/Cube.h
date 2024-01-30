@@ -14,6 +14,9 @@ public:
 	/** Getter and Setters */
 	void SetColor(FVector NewColor);
 
+	/** Public */
+	void Drop();
+
 protected:
 	/** Blueprint */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -22,6 +25,8 @@ protected:
 	UMaterialInstance *MaterialInstance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FString MaterialInstanceColorParameterName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float CubeSize;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 

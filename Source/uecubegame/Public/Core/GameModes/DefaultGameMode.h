@@ -4,6 +4,7 @@
 #include "Engine/LevelScriptActor.h"
 #include "InputMappingContext.h"
 #include "Actors/Tetracube.h"
+#include "Actors/CheckLines.h"
 #include "DefaultGameMode.generated.h"
 
 UCLASS()
@@ -28,6 +29,8 @@ protected:
 	FVector NextTetracubeSpawnLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
 	float TetracubeDropSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
+	TSoftObjectPtr<ACheckLines> CheckLines;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
 	TSoftObjectPtr<UInputMappingContext> InputMapping;
 

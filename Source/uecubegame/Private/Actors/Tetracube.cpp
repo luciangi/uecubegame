@@ -7,7 +7,7 @@ ATetracube::ATetracube()
 	USceneComponent *DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	SetRootComponent(DefaultSceneRoot);
 
-	for (int i = 0; i <= 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		FString SubobjectName = "Cube" + FString::Printf(TEXT("%d"), i);
 		UStaticMeshComponent *Cube = CreateDefaultSubobject<UStaticMeshComponent>(FName(*SubobjectName));

@@ -1,4 +1,5 @@
 #include "Actors/CheckLines.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 /** Constructors */
 ACheckLines::ACheckLines()
@@ -20,7 +21,7 @@ void ACheckLines::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);
 
-	float ZLocation = CubeSize;
+	float ZLocation = 0;
 	for (UBoxComponent *BoxCollisionComponent : BoxCollisionComponents)
 	{
 		ZLocation += CubeSize;
@@ -29,7 +30,31 @@ void ACheckLines::OnConstruction(const FTransform &Transform)
 	}
 }
 
-void ACheckLines::BeginPlay()
+/** Public */
+TArray<float> ACheckLines::CheckCompletedLines(UClass *ActorClassFilter)
 {
-	Super::BeginPlay();
+	TArray<float> CompletedLinesZPosition;
+	for (UBoxComponent *BoxCollisionComponent : BoxCollisionComponents)
+	{
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+
+		TArray<AActor *> ActorsToIgnore;
+		TArray<AActor *> OutActors;
+
+		UKismetSystemLibrary::ComponentOverlapActors(
+			BoxCollisionComponent,
+			BoxCollisionComponent->GetComponentTransform(),
+			ObjectTypes,
+			ActorClassFilter,
+			ActorsToIgnore,
+			OutActors);
+
+		if (OutActors.Num() >= 10)
+		{
+			CompletedLinesZPosition.Add(BoxCollisionComponent->GetComponentLocation().Z);
+		}
+	}
+
+	return CompletedLinesZPosition;
 }

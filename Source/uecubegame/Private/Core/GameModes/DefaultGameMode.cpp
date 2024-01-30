@@ -53,6 +53,30 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
 
     StageTetracube(NextTetracube);
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
+
+    TArray<AActor *> ActorsOnCompletedLines;
+    TArray<float> CompletedLineZPosition = CheckLines->CheckCompletedLines(ACube::StaticClass());
+
+    TArray<AActor *> AllActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
+
+    for (AActor *Actor : AllActors)
+    {
+        ACube *Cube = Cast<ACube>(Actor);
+        float CubeZLocation = Cube->GetActorLocation().Z;
+
+        for (float ZPosition : CompletedLineZPosition)
+        {
+            if (CubeZLocation == ZPosition)
+            {
+                Cube->Destroy();
+            }
+            else if (CubeZLocation > ZPosition)
+            {
+                Cube->Drop();
+            }
+        }
+    }
 }
 
 /** Private */

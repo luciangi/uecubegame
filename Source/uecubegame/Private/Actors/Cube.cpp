@@ -17,6 +17,13 @@ void ACube::SetColor(FVector NewColor)
 	Color = NewColor;
 }
 
+/** Public */
+void ACube::Drop()
+{
+	FVector CurrentLocation = GetActorLocation();
+	SetActorLocation(CurrentLocation - FVector(0.0f, 0.0f, CubeSize));
+}
+
 /** Blueprint */
 void ACube::OnConstruction(const FTransform &Transform)
 {
