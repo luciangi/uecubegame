@@ -1,5 +1,6 @@
 #include "Actors/Cube.h"
 #include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 /** Constructors */
 ACube::ACube()
@@ -26,6 +27,12 @@ void ACube::SetColor(FVector NewColor)
 }
 
 /** Public */
+void ACube::Remove()
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ParticleSystem, GetActorLocation(), FRotator::ZeroRotator, true);
+	Destroy();
+}
+
 void ACube::DropTargetZLocation()
 {
 	TargetZLocation -= CubeSize;

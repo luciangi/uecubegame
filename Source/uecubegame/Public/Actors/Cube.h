@@ -17,6 +17,8 @@ public:
 	void SetColor(FVector NewColor);
 
 	/** Public */
+	void Remove();
+
 	void DropTargetZLocation();
 
 protected:
@@ -33,6 +35,8 @@ protected:
 	float DropSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float FlashSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UParticleSystem *ParticleSystem;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 	virtual void Tick(float DeltaTime) override;

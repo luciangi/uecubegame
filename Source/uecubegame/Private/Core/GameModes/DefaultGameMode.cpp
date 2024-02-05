@@ -70,7 +70,7 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
             {
                 if (CubeZLocation == ZPosition)
                 {
-                    Cube->Destroy();
+                    Cube->Remove();
                 }
                 else if (CubeZLocation > ZPosition)
                 {
