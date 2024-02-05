@@ -1,4 +1,5 @@
 #include "Actors/Cube.h"
+#include "TimerManager.h"
 
 /** Constructors */
 ACube::ACube()
@@ -37,9 +38,10 @@ void ACube::OnConstruction(const FTransform &Transform)
 
 	Cube->SetStaticMesh(StaticMesh);
 	Cube->SetMaterial(0, MaterialInstance);
-	Cube->SetVectorParameterValueOnMaterials(FName(*MaterialInstanceColorParameterName), Color);
 
 	TargetZLocation = GetActorLocation().Z;
+
+	StartFlash();
 }
 
 void ACube::Tick(float DeltaTime)
@@ -54,4 +56,19 @@ void ACube::Tick(float DeltaTime)
 		long ZLocation = FMath::Lerp(CurrentZLocation, TargetZLocation, DropSpeed);
 		SetActorLocation(FVector(CurrentLocation.X, CurrentLocation.Y, ZLocation));
 	}
+}
+
+/** Private */
+void ACube::StartFlash()
+{
+	FVector WhiteColor = FVector(FLinearColor::White.R, FLinearColor::White.G, FLinearColor::White.B);
+	Cube->SetVectorParameterValueOnMaterials(FName(*MaterialInstanceColorParameterName), WhiteColor);
+
+	GetWorldTimerManager().SetTimer(FlashTimerHandle, this, &ACube::OnFlashTimer, FlashSpeed, false);
+}
+
+void ACube::OnFlashTimer()
+{
+	GetWorldTimerManager().ClearTimer(FlashTimerHandle);
+	Cube->SetVectorParameterValueOnMaterials(FName(*MaterialInstanceColorParameterName), Color);
 }

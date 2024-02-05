@@ -31,6 +31,8 @@ protected:
 	float CubeSize;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float DropSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float FlashSpeed;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 	virtual void Tick(float DeltaTime) override;
@@ -38,5 +40,9 @@ protected:
 private:
 	UStaticMeshComponent *Cube;
 	FVector Color;
+	FTimerHandle FlashTimerHandle;
 	float TargetZLocation;
+
+	void StartFlash();
+	void OnFlashTimer();
 };
