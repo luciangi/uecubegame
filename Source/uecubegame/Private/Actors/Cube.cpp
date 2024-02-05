@@ -18,10 +18,10 @@ void ACube::SetColor(FVector NewColor)
 }
 
 /** Public */
-void ACube::Drop()
+void ACube::SetZLocation(float TargetZLocation)
 {
 	FVector CurrentLocation = GetActorLocation();
-	SetActorLocation(CurrentLocation - FVector(0.0f, 0.0f, CubeSize));
+	SetActorLocation(FVector(CurrentLocation.X, CurrentLocation.Y, TargetZLocation));
 }
 
 /** Blueprint */

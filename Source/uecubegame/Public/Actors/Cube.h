@@ -15,7 +15,7 @@ public:
 	void SetColor(FVector NewColor);
 
 	/** Public */
-	void Drop();
+	void SetZLocation(float TargetZLocation);
 
 protected:
 	/** Blueprint */

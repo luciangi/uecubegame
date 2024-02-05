@@ -54,27 +54,45 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     StageTetracube(NextTetracube);
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 
-    TArray<AActor *> ActorsOnCompletedLines;
-    TArray<float> CompletedLineZPosition = CheckLines->CheckCompletedLines(ACube::StaticClass());
+    TArray<float> CompletedLineZLocation = CheckLines->CheckCompletedLines(ACube::StaticClass());
 
-    TArray<AActor *> AllActors;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
-
-    for (AActor *Actor : AllActors)
+    if (CompletedLineZLocation.Num() > 0)
     {
-        ACube *Cube = Cast<ACube>(Actor);
-        float CubeZLocation = Cube->GetActorLocation().Z;
+        TMap<AActor *, float> ActorsToTargetZLocation;
+        TArray<AActor *> AllActors;
+        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
 
-        for (float ZPosition : CompletedLineZPosition)
+        for (AActor *Actor : AllActors)
         {
-            if (CubeZLocation == ZPosition)
+            ACube *Cube = Cast<ACube>(Actor);
+            float CubeZLocation = Cube->GetActorLocation().Z;
+
+            for (float ZPosition : CompletedLineZLocation)
             {
-                Cube->Destroy();
+                if (CubeZLocation == ZPosition)
+                {
+                    Cube->Destroy();
+                }
+                else if (CubeZLocation > ZPosition)
+                {
+                    if (!ActorsToTargetZLocation.Contains(Actor))
+                    {
+                        ActorsToTargetZLocation.Add(Actor, CubeZLocation);
+                    }
+
+                    float TargetZLocation = *ActorsToTargetZLocation.Find(Actor);
+                    TargetZLocation -= CubeSize;
+                    ActorsToTargetZLocation.Add(Actor, TargetZLocation);
+                }
             }
-            else if (CubeZLocation > ZPosition)
-            {
-                Cube->Drop();
-            }
+        }
+
+        for (const auto &KeyValue : ActorsToTargetZLocation)
+        {
+            ACube *Cube = Cast<ACube>(KeyValue.Key);
+            float TargetZLocation = KeyValue.Value;
+
+            Cube->SetZLocation(TargetZLocation);
         }
     }
 }

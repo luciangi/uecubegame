@@ -31,6 +31,8 @@ protected:
 	float TetracubeDropSpeed;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
 	TSoftObjectPtr<ACheckLines> CheckLines;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
+	float CubeSize;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
 	TSoftObjectPtr<UInputMappingContext> InputMapping;
 

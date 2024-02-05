@@ -33,7 +33,7 @@ void ACheckLines::OnConstruction(const FTransform &Transform)
 /** Public */
 TArray<float> ACheckLines::CheckCompletedLines(UClass *ActorClassFilter)
 {
-	TArray<float> CompletedLinesZPosition;
+	TArray<float> CompletedLinesZLocation;
 	for (UBoxComponent *BoxCollisionComponent : BoxCollisionComponents)
 	{
 		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
@@ -52,9 +52,9 @@ TArray<float> ACheckLines::CheckCompletedLines(UClass *ActorClassFilter)
 
 		if (OutActors.Num() >= 10)
 		{
-			CompletedLinesZPosition.Add(BoxCollisionComponent->GetComponentLocation().Z);
+			CompletedLinesZLocation.Add(BoxCollisionComponent->GetComponentLocation().Z);
 		}
 	}
 
-	return CompletedLinesZPosition;
+	return CompletedLinesZLocation;
 }
