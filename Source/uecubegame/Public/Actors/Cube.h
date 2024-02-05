@@ -12,10 +12,12 @@ public:
 	ACube();
 
 	/** Getter and Setters */
+	float &GetTargetZLocation();
+
 	void SetColor(FVector NewColor);
 
 	/** Public */
-	void SetZLocation(float TargetZLocation);
+	void DropTargetZLocation();
 
 protected:
 	/** Blueprint */
@@ -27,10 +29,14 @@ protected:
 	FString MaterialInstanceColorParameterName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float CubeSize;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float DropSpeed;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
+	virtual void Tick(float DeltaTime) override;
 
 private:
 	UStaticMeshComponent *Cube;
 	FVector Color;
+	float TargetZLocation;
 };

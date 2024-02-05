@@ -58,7 +58,6 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
 
     if (CompletedLineZLocation.Num() > 0)
     {
-        TMap<AActor *, float> ActorsToTargetZLocation;
         TArray<AActor *> AllActors;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
 
@@ -75,24 +74,9 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
                 }
                 else if (CubeZLocation > ZPosition)
                 {
-                    if (!ActorsToTargetZLocation.Contains(Actor))
-                    {
-                        ActorsToTargetZLocation.Add(Actor, CubeZLocation);
-                    }
-
-                    float TargetZLocation = *ActorsToTargetZLocation.Find(Actor);
-                    TargetZLocation -= CubeSize;
-                    ActorsToTargetZLocation.Add(Actor, TargetZLocation);
+                    Cube->DropTargetZLocation();
                 }
             }
-        }
-
-        for (const auto &KeyValue : ActorsToTargetZLocation)
-        {
-            ACube *Cube = Cast<ACube>(KeyValue.Key);
-            float TargetZLocation = KeyValue.Value;
-
-            Cube->SetZLocation(TargetZLocation);
         }
     }
 }
