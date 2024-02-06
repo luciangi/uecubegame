@@ -33,8 +33,9 @@ void ADefaultGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
-    ULocalPlayer *LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+    PlayerController = Cast<ADefaultPlayerController>(GetWorld()->GetFirstPlayerController());
 
+    ULocalPlayer *LocalPlayer = Cast<ULocalPlayer>(PlayerController->Player);
     if (UEnhancedInputLocalPlayerSubsystem *InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
     {
         if (!InputMapping.IsNull())
@@ -55,8 +56,8 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 
     TArray<float> CompletedLineZLocation = CheckLines->CheckCompletedLines(ACube::StaticClass());
-
-    if (CompletedLineZLocation.Num() > 0)
+    int ClearedLines = CompletedLineZLocation.Num();
+    if (ClearedLines > 0)
     {
         TArray<AActor *> AllActors;
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
@@ -78,6 +79,8 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
                 }
             }
         }
+
+        PlayerController->ComputeLevelAndScore(ClearedLines);
     }
 }
 
@@ -91,7 +94,6 @@ ATetracube *ADefaultGameMode::SpawnNewTetracube(FVector SpawnLocation)
     if (NewTetracube)
     {
         NewTetracube->SetActorLocation(SpawnLocation);
-        NewTetracube->SetDropSpeed(TetracubeDropSpeed);
         NewTetracube->FinishSpawning(NewTetracubeTransform);
     }
 
@@ -102,7 +104,7 @@ void ADefaultGameMode::StageTetracube(ATetracube *Tetracube)
 {
     Tetracube->GetOnTetracubeCollision().AddDynamic(this, &ADefaultGameMode::HandleTetracubeCollisionEvent);
     Tetracube->SetActorLocation(CurrentTetracubeSpawnLocation);
-    Tetracube->StartDropping();
+    Tetracube->StartDropping(PlayerController->GetTetracubeDropSpeed());
 
     CurrentTetracube = Tetracube;
 }

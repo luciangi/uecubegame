@@ -32,10 +32,8 @@ public:
 	/** Getters and Setters */
 	FTetracubeCollisionEvent &GetOnTetracubeCollision();
 
-	void SetDropSpeed(float NewDropSpeed);
-
 	/** Public */
-	void StartDropping();
+	void StartDropping(float DropSpeed);
 	void Rotate();
 	void MoveLeft();
 	void MoveRight();
@@ -60,7 +58,6 @@ protected:
 	virtual void OnConstruction(const FTransform &Transform) override;
 
 private:
-	float DropSpeed;
 	FVector Color;
 	TArray<UStaticMeshComponent*> Cubes;
 	FTimerHandle DropTimerHandle;

@@ -22,13 +22,8 @@ FTetracubeCollisionEvent &ATetracube::GetOnTetracubeCollision()
 	return OnTetracubeCollision;
 }
 
-void ATetracube::SetDropSpeed(float NewDropSpeed)
-{
-	DropSpeed = NewDropSpeed;
-}
-
 /** Public */
-void ATetracube::StartDropping()
+void ATetracube::StartDropping(float DropSpeed)
 {
 	GetWorldTimerManager().SetTimer(DropTimerHandle, this, &ATetracube::OnDropTimer, DropSpeed, true);
 }

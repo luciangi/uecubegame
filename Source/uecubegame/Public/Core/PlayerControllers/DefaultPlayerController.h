@@ -1,12 +1,22 @@
 #pragma once
 
 #include "InputAction.h"
+#include "UI/DefaultHud.h"
 #include "DefaultPlayerController.generated.h"
 
 UCLASS()
 class UECUBEGAME_API ADefaultPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	ADefaultPlayerController();
+
+	/** Getters and Setters */
+	float GetTetracubeDropSpeed();
+
+	/** Public */
+	void ComputeLevelAndScore(int ClearedLines);
 
 protected:
 	/** Blueprint */
@@ -18,11 +28,19 @@ protected:
 	UInputAction *MoveRightAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
 	UInputAction *MoveDownAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hud")
+	TSubclassOf<ADefaultHud> HudClass;
 
-public:
-	/** Blueprint */
-    virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
 private:
-    void SetupInputBindings();
+	ADefaultHud *Hud;
+
+	int Score;
+	int Level;
+	int ClearedLines;
+	float TetracubeDropSpeed;
+
+	void SetupInputBindings();
+    void UpdateHud();
 };

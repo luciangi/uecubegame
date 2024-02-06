@@ -1,18 +1,17 @@
 #include "UI/DefaultHud.h"
 #include "UI/DefaultHudUserWidget.h"
 
-/** Blueprint */
-void ADefaultHud::DrawHUD()
+/** Public */
+void ADefaultHud::SetScoreAndLevel(int Score, int Level)
 {
-    Super::DrawHUD();
+    WidgetInstance->SetScoreAndLevel(Score, Level);
+}
 
-    if (HudWidgetClass)
-    {
-        UDefaultHudUserWidget *WidgetInstance = CreateWidget<UDefaultHudUserWidget>(GetWorld(), HudWidgetClass);
+/** Blueprint */
+void ADefaultHud::OnConstruction(const FTransform &Transform)
+{
+    Super::OnConstruction(Transform);
 
-        if (WidgetInstance)
-        {
-            WidgetInstance->AddToViewport();
-        }
-    }
+    WidgetInstance = CreateWidget<UDefaultHudUserWidget>(GetWorld(), HudWidgetClass);
+    WidgetInstance->AddToViewport();
 }

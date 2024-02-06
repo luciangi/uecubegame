@@ -10,10 +10,16 @@ class UECUBEGAME_API ADefaultHud : public AHUD
 	GENERATED_BODY()
 
 public:
-	/** Blueprint */
-	virtual void DrawHUD() override;
+	/** Public */
+    void SetScoreAndLevel(int Score, int Level);
+
+    /** Blueprint */
+    virtual void OnConstruction(const FTransform &Transform) override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<UDefaultHudUserWidget> HudWidgetClass;
+
+private:
+	UDefaultHudUserWidget *WidgetInstance;
 };
