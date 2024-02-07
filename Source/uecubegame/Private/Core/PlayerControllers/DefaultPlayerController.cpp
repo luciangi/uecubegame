@@ -51,6 +51,34 @@ float ADefaultPlayerController::ComputeDropSpeed()
     return FMath::Max(0.1f, 1.0f - (Level - 1) * DropSpeedIncrement);
 }
 
+void ADefaultPlayerController::PauseGame()
+{
+    RemoveInputMapping(GameInputMapping);
+    AddInputMapping(PausedInputMapping);
+    if (!PausedGameWidget)
+    {
+        PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
+    }
+    PausedGameWidget->AddToViewport();
+}
+
+void ADefaultPlayerController::ResumeGame()
+{
+    RemoveInputMapping(PausedInputMapping);
+    AddInputMapping(GameInputMapping);
+    PausedGameWidget->RemoveFromParent();
+}
+
+void ADefaultPlayerController::EndGame()
+{
+    RemoveInputMapping(GameInputMapping);
+    if (!EndGameWidget)
+    {
+        EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
+    }
+    EndGameWidget->AddToViewport();
+}
+
 /** Blueprint */
 void ADefaultPlayerController::BeginPlay()
 {
@@ -62,20 +90,33 @@ void ADefaultPlayerController::BeginPlay()
     HudWidget->SetLevel(Level);
 
     SetupInputBindings();
+    AddInputMapping(GameInputMapping);
 }
 
 /** Private */
 void ADefaultPlayerController::SetupInputBindings()
 {
-    ULocalPlayer *LocalPlayer = Cast<ULocalPlayer>(Player);
-    UEnhancedInputLocalPlayerSubsystem *InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-    InputSystem->AddMappingContext(DefaultInputMapping.LoadSynchronous(), 0);
-
     UEnhancedInputComponent *Input = Cast<UEnhancedInputComponent>(InputComponent);
     ADefaultGameMode *DefaultGameMode = Cast<ADefaultGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+    Input->BindAction(PauseGameAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::PauseGame);
+    Input->BindAction(ResumeGameAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::ResumeGame);
+
     Input->BindAction(TetracubeRotateAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeRotate);
     Input->BindAction(TetracubeMoveLeftAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveLeft);
     Input->BindAction(TetracubeMoveRightAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveRight);
     Input->BindAction(TetracubeMoveDownAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeAccelerate);
     Input->BindAction(TetracubeMoveDownAction, ETriggerEvent::Completed, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeDecelerate);
+}
+
+void ADefaultPlayerController::AddInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext)
+{
+    UEnhancedInputLocalPlayerSubsystem *InputSystem = Cast<ULocalPlayer>(Player)->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+    InputSystem->AddMappingContext(MappingContext.LoadSynchronous(), 0);
+}
+
+void ADefaultPlayerController::RemoveInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext)
+{
+    UEnhancedInputLocalPlayerSubsystem *InputSystem = Cast<ULocalPlayer>(Player)->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+    InputSystem->RemoveMappingContext(MappingContext.LoadSynchronous());
 }

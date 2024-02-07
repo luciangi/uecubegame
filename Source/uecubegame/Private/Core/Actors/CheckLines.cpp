@@ -7,7 +7,7 @@ ACheckLines::ACheckLines()
 	USceneComponent *DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	SetRootComponent(DefaultSceneRoot);
 
-	for (int i = 0; i <= 15; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		FString SubobjectName = "CompletedLinesBoxCollision" + FString::Printf(TEXT("%d"), i);
 		UBoxComponent *Box = CreateDefaultSubobject<UBoxComponent>(FName(*SubobjectName));

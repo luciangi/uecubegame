@@ -3,6 +3,18 @@
 #include "Engine/Engine.h"
 
 /** Public */
+void ADefaultGameMode::PauseGame()
+{
+    PlayerController->PauseGame();
+    UGameplayStatics::SetGamePaused(GetGameInstance(), true);
+}
+
+void ADefaultGameMode::ResumeGame()
+{
+    PlayerController->ResumeGame();
+    UGameplayStatics::SetGamePaused(GetGameInstance(), false);
+}
+
 void ADefaultGameMode::CurrentTetracubeRotate()
 {
     CurrentTetracube->Rotate();
@@ -42,15 +54,12 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
 {
     CurrentTetracube->GetOnTetracubeCollision().RemoveDynamic(this, &ADefaultGameMode::HandleTetracubeCollisionEvent);
 
-    StageTetracube(NextTetracube);
-    NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
-
     UClass *ActorClassFilter = ACube::StaticClass();
 
     bool IsEndGame = CheckLines->CheckOverlapWithEndLine(ActorClassFilter);
     if (IsEndGame)
     {
-        HandleEndGame();
+        PlayerController->EndGame();
         return;
     }
 
@@ -59,6 +68,9 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     {
         HandleCompletedLines(CompletedLinesZLocation);
     }
+
+    StageTetracube(NextTetracube);
+    NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 }
 
 /** Private */
@@ -85,11 +97,6 @@ void ADefaultGameMode::StageTetracube(ATetracube *Tetracube)
 
     CurrentTetracube = Tetracube;
 }
-
-void ADefaultGameMode::HandleEndGame()
-{
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Game should end here");
-};
 
 void ADefaultGameMode::HandleCompletedLines(TArray<float> CompletedLinesZLocation)
 {

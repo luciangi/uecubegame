@@ -1,8 +1,8 @@
 #pragma once
 
 #include "InputAction.h"
+#include "Blueprint/UserWidget.h"
 #include "UI/Widgets/HudUserWidget.h"
-#include "UI/Widgets/EndGameUserWidget.h"
 #include "InputMappingContext.h"
 #include "DefaultPlayerController.generated.h"
 
@@ -25,11 +25,22 @@ public:
 
 	/** Public */
 	float ComputeDropSpeed();
+	void PauseGame();
+	void ResumeGame();
+	void EndGame();
 
 protected:
 	/** Blueprint */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Mappings")
-	TSoftObjectPtr<UInputMappingContext> DefaultInputMapping;
+	TSoftObjectPtr<UInputMappingContext> GameInputMapping;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Mappings")
+	TSoftObjectPtr<UInputMappingContext> PausedInputMapping;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *PauseGameAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *ResumeGameAction;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
 	UInputAction *TetracubeRotateAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
@@ -38,20 +49,26 @@ protected:
 	UInputAction *TetracubeMoveRightAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
 	UInputAction *TetracubeMoveDownAction;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UHudUserWidget> HudWidgetClass;
+	TSubclassOf<UUserWidget> HudWidgetClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UEndGameUserWidget> EndGameWidgetClass;
+	TSubclassOf<UUserWidget> PausedGameWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UUserWidget> EndGameWidgetClass;
 
 	virtual void BeginPlay() override;
 
 private:
 	UHudUserWidget *HudWidget;
-	UEndGameUserWidget *EndGameWidget;
+	UUserWidget *PausedGameWidget;
+	UUserWidget *EndGameWidget;
 
 	int Score;
 	int Level;
 	int ClearedLines;
 
 	void SetupInputBindings();
+	void AddInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
+	void RemoveInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
 };

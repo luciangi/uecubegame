@@ -13,8 +13,10 @@ class UECUBEGAME_API ADefaultGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
-	void CurrentTetracubeRotate();
-	void CurrentTetracubeMoveLeft();
+    void PauseGame();
+    void ResumeGame();
+    void CurrentTetracubeRotate();
+    void CurrentTetracubeMoveLeft();
 	void CurrentTetracubeMoveRight();
 	void CurrentTetracubeAccelerate();
 	void CurrentTetracubeDecelerate();
