@@ -1,4 +1,4 @@
-#include "Actors/Tetracube.h"
+#include "Core/Actors/Tetracube.h"
 #include "Kismet/GameplayStatics.h"
 
 /** Constructors */

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "DefaultHudUserWidget.generated.h"
+#include "HudUserWidget.generated.h"
 
 class UTextBlock;
 
 UCLASS()
-class UECUBEGAME_API UDefaultHudUserWidget : public UUserWidget
+class UECUBEGAME_API UHudUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

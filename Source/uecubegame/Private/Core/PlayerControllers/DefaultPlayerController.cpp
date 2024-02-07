@@ -56,7 +56,7 @@ void ADefaultPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    HudWidget = CreateWidget<UDefaultHudUserWidget>(GetWorld(), HudWidgetClass);
+    HudWidget = CreateWidget<UHudUserWidget>(GetWorld(), HudWidgetClass);
     HudWidget->AddToViewport();
     HudWidget->SetScore(Score);
     HudWidget->SetLevel(Level);

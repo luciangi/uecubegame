@@ -1,7 +1,8 @@
 #pragma once
 
 #include "InputAction.h"
-#include "UI/DefaultHudUserWidget.h"
+#include "UI/Widgets/HudUserWidget.h"
+#include "UI/Widgets/EndGameUserWidget.h"
 #include "InputMappingContext.h"
 #include "DefaultPlayerController.generated.h"
 
@@ -38,15 +39,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
 	UInputAction *TetracubeMoveDownAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UDefaultHudUserWidget> HudWidgetClass;
+	TSubclassOf<UHudUserWidget> HudWidgetClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
-	TSubclassOf<UDefaultHudUserWidget> EndGameWidgetClass;
+	TSubclassOf<UEndGameUserWidget> EndGameWidgetClass;
 
 	virtual void BeginPlay() override;
 
 private:
-	UDefaultHudUserWidget *HudWidget;
-	UDefaultHudUserWidget *EndGameWidget;
+	UHudUserWidget *HudWidget;
+	UEndGameUserWidget *EndGameWidget;
 
 	int Score;
 	int Level;

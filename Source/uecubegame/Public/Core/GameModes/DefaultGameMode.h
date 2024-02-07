@@ -2,8 +2,8 @@
 
 #include "GameFramework/GameMode.h"
 #include "Engine/LevelScriptActor.h"
-#include "Actors/Tetracube.h"
-#include "Actors/CheckLines.h"
+#include "Core/Actors/Tetracube.h"
+#include "Core/Actors/CheckLines.h"
 #include "Core/PlayerControllers/DefaultPlayerController.h"
 #include "DefaultGameMode.generated.h"
 
