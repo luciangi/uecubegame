@@ -1,43 +1,54 @@
 #include "Core/PlayerControllers/DefaultPlayerController.h"
-#include "EnhancedInputComponent.h"
 #include "Core/GameModes/DefaultGameMode.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 ADefaultPlayerController::ADefaultPlayerController()
 {
     Score = 0;
     Level = 0;
-    TetracubeDropSpeed = 1;
+    ClearedLines = 0;
 }
 
 /** Getters and Setters */
-float ADefaultPlayerController::GetTetracubeDropSpeed()
+int ADefaultPlayerController::GetScore()
 {
-    return TetracubeDropSpeed;
+    return Score;
+}
+
+int ADefaultPlayerController::GetLevel()
+{
+    return Level;
+}
+
+int ADefaultPlayerController::GetClearedLines()
+{
+    return ClearedLines;
+}
+
+void ADefaultPlayerController::SetScore(int NewScore)
+{
+    Score = NewScore;
+    HudWidget->SetScore(Score);
+}
+
+void ADefaultPlayerController::SetLevel(int NewLevel)
+{
+    Level = NewLevel;
+    HudWidget->SetLevel(Level);
+}
+
+void ADefaultPlayerController::SetClearedLines(int NewClearedLines)
+{
+    ClearedLines = NewClearedLines;
 }
 
 /** Public */
-void ADefaultPlayerController::ComputeLevelAndScore(int CurrentClearedLines)
+float ADefaultPlayerController::ComputeDropSpeed()
 {
-    const int LinesToNextLevel = 10;
-    const float TetracubeDropSpeedIncrement = 0.1f;
-
-    Score += (Level + 1) * CurrentClearedLines * 100;
-
-    ClearedLines += CurrentClearedLines;
-
-    if (ClearedLines >= LinesToNextLevel)
-    {
-        Level++;
-        ClearedLines = 0;
-
-        if (TetracubeDropSpeed > TetracubeDropSpeedIncrement)
-        {
-            TetracubeDropSpeed -= TetracubeDropSpeedIncrement;
-        }
-    }
-
-    UpdateHud();
+    const float DropSpeedIncrement = 0.1f;
+    return FMath::Max(0.1f, 1.0f - (Level - 1) * DropSpeedIncrement);
 }
 
 /** Blueprint */
@@ -45,26 +56,26 @@ void ADefaultPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    ClientSetHUD(HudClass);
-    UpdateHud();
+    HudWidget = CreateWidget<UDefaultHudUserWidget>(GetWorld(), HudWidgetClass);
+    HudWidget->AddToViewport();
+    HudWidget->SetScore(Score);
+    HudWidget->SetLevel(Level);
+
     SetupInputBindings();
 }
 
 /** Private */
 void ADefaultPlayerController::SetupInputBindings()
 {
+    ULocalPlayer *LocalPlayer = Cast<ULocalPlayer>(Player);
+    UEnhancedInputLocalPlayerSubsystem *InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+    InputSystem->AddMappingContext(DefaultInputMapping.LoadSynchronous(), 0);
 
     UEnhancedInputComponent *Input = Cast<UEnhancedInputComponent>(InputComponent);
-
     ADefaultGameMode *DefaultGameMode = Cast<ADefaultGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-    Input->BindAction(RotateAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeRotate);
-    Input->BindAction(MoveLeftAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveLeft);
-    Input->BindAction(MoveRightAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveRight);
-    Input->BindAction(MoveDownAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeAccelerate);
-    Input->BindAction(MoveDownAction, ETriggerEvent::Completed, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeDecelerate);
-}
-
-void ADefaultPlayerController::UpdateHud()
-{
-    GetHUD<ADefaultHud>()->SetScoreAndLevel(Score, Level);
+    Input->BindAction(TetracubeRotateAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeRotate);
+    Input->BindAction(TetracubeMoveLeftAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveLeft);
+    Input->BindAction(TetracubeMoveRightAction, ETriggerEvent::Triggered, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeMoveRight);
+    Input->BindAction(TetracubeMoveDownAction, ETriggerEvent::Started, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeAccelerate);
+    Input->BindAction(TetracubeMoveDownAction, ETriggerEvent::Completed, DefaultGameMode, &ADefaultGameMode::CurrentTetracubeDecelerate);
 }

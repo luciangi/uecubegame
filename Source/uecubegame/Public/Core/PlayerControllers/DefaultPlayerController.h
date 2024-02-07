@@ -1,7 +1,8 @@
 #pragma once
 
 #include "InputAction.h"
-#include "UI/DefaultHud.h"
+#include "UI/DefaultHudUserWidget.h"
+#include "InputMappingContext.h"
 #include "DefaultPlayerController.generated.h"
 
 UCLASS()
@@ -13,34 +14,43 @@ public:
 	ADefaultPlayerController();
 
 	/** Getters and Setters */
-	float GetTetracubeDropSpeed();
+	int GetScore();
+	int GetLevel();
+	int GetClearedLines();
+
+	void SetScore(int NewScore);
+	void SetLevel(int NewLevel);
+	void SetClearedLines(int NewClearedLines);
 
 	/** Public */
-	void ComputeLevelAndScore(int ClearedLines);
+	float ComputeDropSpeed();
 
 protected:
 	/** Blueprint */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction *RotateAction;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction *MoveLeftAction;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction *MoveRightAction;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction *MoveDownAction;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Hud")
-	TSubclassOf<ADefaultHud> HudClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Mappings")
+	TSoftObjectPtr<UInputMappingContext> DefaultInputMapping;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *TetracubeRotateAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *TetracubeMoveLeftAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *TetracubeMoveRightAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input Actions")
+	UInputAction *TetracubeMoveDownAction;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UDefaultHudUserWidget> HudWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UDefaultHudUserWidget> EndGameWidgetClass;
 
 	virtual void BeginPlay() override;
 
 private:
-	ADefaultHud *Hud;
+	UDefaultHudUserWidget *HudWidget;
+	UDefaultHudUserWidget *EndGameWidget;
 
 	int Score;
 	int Level;
 	int ClearedLines;
-	float TetracubeDropSpeed;
 
 	void SetupInputBindings();
-    void UpdateHud();
 };

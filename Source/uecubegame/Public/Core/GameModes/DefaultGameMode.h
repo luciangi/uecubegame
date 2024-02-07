@@ -2,7 +2,6 @@
 
 #include "GameFramework/GameMode.h"
 #include "Engine/LevelScriptActor.h"
-#include "InputMappingContext.h"
 #include "Actors/Tetracube.h"
 #include "Actors/CheckLines.h"
 #include "Core/PlayerControllers/DefaultPlayerController.h"
@@ -30,8 +29,6 @@ protected:
 	FVector NextTetracubeSpawnLocation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
 	TSoftObjectPtr<ACheckLines> CheckLines;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	TSoftObjectPtr<UInputMappingContext> InputMapping;
 
 	virtual void BeginPlay() override;
 
@@ -46,4 +43,7 @@ private:
 
 	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
 	void StageTetracube(ATetracube *Tetracube);
+    void HandleEndGame();
+    void HandleCompletedLines(TArray<float> CompletedLinesZLocation);
+    void ComputeLevelAndScore(int CurrentClearedLines);
 };

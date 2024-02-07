@@ -14,7 +14,8 @@ public:
 	ACheckLines();
 
 	/** Public */
-	TArray<float> CheckCompletedLines(UClass *ActorClassFilter);
+	TArray<float> CheckOverlapWithCompletedLines(UClass *ActorClassFilter);
+	bool CheckOverlapWithEndLine(UClass *ActorClassFilter);
 
 protected:
 	/** Blueprint */
@@ -26,5 +27,8 @@ protected:
 	void OnConstruction(const FTransform &Transform);
 
 private:
-	TArray<UBoxComponent *> BoxCollisionComponents;
+	TArray<UBoxComponent *> CompletedLinesBoxCollisionComponents;
+	UBoxComponent *EndLineBoxCollisionComponent;
+
+	int GetOverlappingActorsCount(UClass *ActorClassFilter, UBoxComponent *BoxComponent);
 };

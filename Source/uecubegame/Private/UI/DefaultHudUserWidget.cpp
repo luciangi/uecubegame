@@ -2,8 +2,12 @@
 #include "Components/TextBlock.h"
 
 /** Public */
-void UDefaultHudUserWidget::SetScoreAndLevel(int Score, int Level)
+void UDefaultHudUserWidget::SetScore(int Score)
 {
     ScoreValueText->SetText(FText::AsNumber(Score));
+}
+
+void UDefaultHudUserWidget::SetLevel(int Level)
+{
     LevelValueText->SetText(FText::AsNumber(Level));
 }

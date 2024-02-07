@@ -234,12 +234,12 @@ bool ATetracube::CubeWillHitWorldStatic(UStaticMeshComponent *Cube, FTransform T
 
 void ATetracube::AccelerateTime()
 {
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 20.0f);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), GetWorld()->GetWorldSettings()->MaxGlobalTimeDilation);
 }
 
 void ATetracube::ResetTime()
 {
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), GetWorld()->GetWorldSettings()->MinGlobalTimeDilation);
 }
 
 void ATetracube::SetActorTransform(FTransform NewTransform)

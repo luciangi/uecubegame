@@ -12,7 +12,8 @@ class UECUBEGAME_API UDefaultHudUserWidget : public UUserWidget
 
 public:
 	/** Public */
-	void SetScoreAndLevel(int Score, int Level);
+	void SetScore(int Score);
+	void SetLevel(int Level);
 
 private:
 	/** Blueprint */

@@ -9,11 +9,14 @@ ACheckLines::ACheckLines()
 
 	for (int i = 0; i <= 15; i++)
 	{
-		FString SubobjectName = "BoxCollision" + FString::Printf(TEXT("%d"), i);
+		FString SubobjectName = "CompletedLinesBoxCollision" + FString::Printf(TEXT("%d"), i);
 		UBoxComponent *Box = CreateDefaultSubobject<UBoxComponent>(FName(*SubobjectName));
 		Box->SetupAttachment(DefaultSceneRoot);
-		BoxCollisionComponents.Add(Box);
+		CompletedLinesBoxCollisionComponents.Add(Box);
 	}
+
+	EndLineBoxCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("EndLineBoxCollision"));
+	EndLineBoxCollisionComponent->SetupAttachment(DefaultSceneRoot);
 }
 
 /** Blueprint */
@@ -21,40 +24,55 @@ void ACheckLines::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);
 
-	float ZLocation = 0;
-	for (UBoxComponent *BoxCollisionComponent : BoxCollisionComponents)
+	FVector BoxExtent(0.1f, 5 * CubeSize, 0.1f);
+	float ZLocation = CubeSize;
+	for (UBoxComponent *BoxCollisionComponent : CompletedLinesBoxCollisionComponents)
 	{
-		ZLocation += CubeSize;
-		BoxCollisionComponent->SetBoxExtent(FVector(0.1f, 5 * CubeSize, 0.1f));
+		BoxCollisionComponent->SetBoxExtent(BoxExtent);
 		BoxCollisionComponent->SetRelativeLocation(FVector(0, 0, ZLocation));
+		ZLocation += CubeSize;
 	}
+
+	EndLineBoxCollisionComponent->SetBoxExtent(BoxExtent);
+	EndLineBoxCollisionComponent->SetRelativeLocation(FVector(0, 0, ZLocation));
 }
 
 /** Public */
-TArray<float> ACheckLines::CheckCompletedLines(UClass *ActorClassFilter)
+bool ACheckLines::CheckOverlapWithEndLine(UClass *ActorClassFilter)
+{
+	return GetOverlappingActorsCount(ActorClassFilter, EndLineBoxCollisionComponent) > 0;
+}
+
+TArray<float> ACheckLines::CheckOverlapWithCompletedLines(UClass *ActorClassFilter)
 {
 	TArray<float> CompletedLinesZLocation;
-	for (UBoxComponent *BoxCollisionComponent : BoxCollisionComponents)
+	for (UBoxComponent *BoxCollisionComponent : CompletedLinesBoxCollisionComponents)
 	{
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-
-		TArray<AActor *> ActorsToIgnore;
-		TArray<AActor *> OutActors;
-
-		UKismetSystemLibrary::ComponentOverlapActors(
-			BoxCollisionComponent,
-			BoxCollisionComponent->GetComponentTransform(),
-			ObjectTypes,
-			ActorClassFilter,
-			ActorsToIgnore,
-			OutActors);
-
-		if (OutActors.Num() >= 10)
+		if (GetOverlappingActorsCount(ActorClassFilter, BoxCollisionComponent) >= 10)
 		{
 			CompletedLinesZLocation.Add(BoxCollisionComponent->GetComponentLocation().Z);
 		}
 	}
 
 	return CompletedLinesZLocation;
+}
+
+/** Private */
+int ACheckLines::GetOverlappingActorsCount(UClass *ActorClassFilter, UBoxComponent *BoxComponent)
+{
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+
+	TArray<AActor *> ActorsToIgnore;
+	TArray<AActor *> OverlappingActors;
+
+	UKismetSystemLibrary::ComponentOverlapActors(
+		BoxComponent,
+		BoxComponent->GetComponentTransform(),
+		ObjectTypes,
+		ActorClassFilter,
+		ActorsToIgnore,
+		OverlappingActors);
+
+	return OverlappingActors.Num();
 }

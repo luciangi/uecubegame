@@ -1,6 +1,6 @@
 #include "Core/GameModes/DefaultGameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "EnhancedInputSubsystems.h"
+#include "Engine/Engine.h"
 
 /** Public */
 void ADefaultGameMode::CurrentTetracubeRotate()
@@ -34,16 +34,6 @@ void ADefaultGameMode::BeginPlay()
     Super::BeginPlay();
 
     PlayerController = Cast<ADefaultPlayerController>(GetWorld()->GetFirstPlayerController());
-
-    ULocalPlayer *LocalPlayer = Cast<ULocalPlayer>(PlayerController->Player);
-    if (UEnhancedInputLocalPlayerSubsystem *InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-    {
-        if (!InputMapping.IsNull())
-        {
-            InputSystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
-        }
-    }
-
     StageTetracube(SpawnNewTetracube(CurrentTetracubeSpawnLocation));
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 }
@@ -55,32 +45,19 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     StageTetracube(NextTetracube);
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
 
-    TArray<float> CompletedLineZLocation = CheckLines->CheckCompletedLines(ACube::StaticClass());
-    int ClearedLines = CompletedLineZLocation.Num();
-    if (ClearedLines > 0)
+    UClass *ActorClassFilter = ACube::StaticClass();
+
+    bool IsEndGame = CheckLines->CheckOverlapWithEndLine(ActorClassFilter);
+    if (IsEndGame)
     {
-        TArray<AActor *> AllActors;
-        UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
+        HandleEndGame();
+        return;
+    }
 
-        for (AActor *Actor : AllActors)
-        {
-            ACube *Cube = Cast<ACube>(Actor);
-            float CubeZLocation = Cube->GetActorLocation().Z;
-
-            for (float ZPosition : CompletedLineZLocation)
-            {
-                if (CubeZLocation == ZPosition)
-                {
-                    Cube->Remove();
-                }
-                else if (CubeZLocation > ZPosition)
-                {
-                    Cube->DropTargetZLocation();
-                }
-            }
-        }
-
-        PlayerController->ComputeLevelAndScore(ClearedLines);
+    TArray<float> CompletedLinesZLocation = CheckLines->CheckOverlapWithCompletedLines(ActorClassFilter);
+    if (CompletedLinesZLocation.Num() > 0)
+    {
+        HandleCompletedLines(CompletedLinesZLocation);
     }
 }
 
@@ -104,7 +81,60 @@ void ADefaultGameMode::StageTetracube(ATetracube *Tetracube)
 {
     Tetracube->GetOnTetracubeCollision().AddDynamic(this, &ADefaultGameMode::HandleTetracubeCollisionEvent);
     Tetracube->SetActorLocation(CurrentTetracubeSpawnLocation);
-    Tetracube->StartDropping(PlayerController->GetTetracubeDropSpeed());
+    Tetracube->StartDropping(PlayerController->ComputeDropSpeed());
 
     CurrentTetracube = Tetracube;
+}
+
+void ADefaultGameMode::HandleEndGame()
+{
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, "Game should end here");
+};
+
+void ADefaultGameMode::HandleCompletedLines(TArray<float> CompletedLinesZLocation)
+{
+    int CompletedLinesCount = CompletedLinesZLocation.Num();
+    TArray<AActor *> AllActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
+
+    for (AActor *Actor : AllActors)
+    {
+        ACube *Cube = Cast<ACube>(Actor);
+        float CubeZLocation = Cube->GetActorLocation().Z;
+
+        for (float ZPosition : CompletedLinesZLocation)
+        {
+            if (CubeZLocation == ZPosition)
+            {
+                Cube->Remove();
+            }
+            else if (CubeZLocation > ZPosition)
+            {
+                Cube->DropTargetZLocation();
+            }
+        }
+    }
+
+    ComputeLevelAndScore(CompletedLinesCount);
+}
+
+void ADefaultGameMode::ComputeLevelAndScore(int ClearedLines)
+{
+    const int LinesToNextLevel = 10;
+
+    int CurrentScore = PlayerController->GetScore();
+    int CurrentLevel = PlayerController->GetLevel();
+    int CurrentClearedLines = PlayerController->GetClearedLines();
+
+    PlayerController->SetScore(CurrentScore + (CurrentLevel + 1) * ClearedLines * 100);
+
+    if (CurrentClearedLines >= LinesToNextLevel)
+    {
+        PlayerController->SetLevel(CurrentLevel + 1);
+        PlayerController->SetClearedLines(0);
+    }
+    else
+    {
+        PlayerController->SetClearedLines(CurrentClearedLines + ClearedLines);
+    }
 }
