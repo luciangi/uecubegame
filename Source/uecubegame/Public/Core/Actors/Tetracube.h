@@ -55,8 +55,8 @@ protected:
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ACube> CubeBlueprintClass;
-    UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-    ETetracube3DShape Shape = ETetracube3DShape::None;
+	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+	ETetracube3DShape Shape = ETetracube3DShape::None;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 
