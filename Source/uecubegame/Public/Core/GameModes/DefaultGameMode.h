@@ -13,9 +13,14 @@ class UECUBEGAME_API ADefaultGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
+	void PauseGame();
 	UFUNCTION(BlueprintCallable)
 	void ResumeGame();
-	void PauseGame();
+	UFUNCTION(BlueprintCallable)
+	void ResetGame();
+	UFUNCTION(BlueprintCallable)
+	void OpenMainMenuLevel();
+
 	void CurrentTetracubeRotate();
 	void CurrentTetracubeMoveLeft();
 	void CurrentTetracubeMoveRight();
@@ -24,6 +29,9 @@ public:
 
 protected:
 	/** Blueprint */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Levels")
+	TSoftObjectPtr<UWorld> MainMenuLevel;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
@@ -46,7 +54,6 @@ private:
 
 	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
 	void StageTetracube(ATetracube *Tetracube);
-	void HandleEndGame();
 	void HandleCompletedLines(TArray<float> CompletedLinesZLocation);
 	void ComputeLevelAndScore(int CurrentClearedLines);
 };

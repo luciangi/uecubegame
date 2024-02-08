@@ -78,7 +78,11 @@ void ATetracube::OnConstruction(const FTransform &Transform)
 {
 	Super::OnConstruction(Transform);
 
-	ETetracube3DShape Shape = static_cast<ETetracube3DShape>(FMath::RandRange(0, static_cast<uint8>(ETetracube3DShape::ZShape)));
+	if (Shape == ETetracube3DShape::None)
+	{
+		Shape = static_cast<ETetracube3DShape>(FMath::RandRange(static_cast<uint8>(ETetracube3DShape::IShape), static_cast<uint8>(ETetracube3DShape::ZShape)));
+	}
+
 	switch (Shape)
 	{
 	case ETetracube3DShape::IShape:

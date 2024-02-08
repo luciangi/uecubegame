@@ -6,6 +6,7 @@
 UENUM(BlueprintType)
 enum class ETetracube3DShape : uint8
 {
+	None,
 	IShape,
 	JShape,
 	LShape,
@@ -54,12 +55,14 @@ protected:
 	TSubclassOf<ATetracube> TetracubeBlueprintClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ACube> CubeBlueprintClass;
+    UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+    ETetracube3DShape Shape = ETetracube3DShape::None;
 
 	virtual void OnConstruction(const FTransform &Transform) override;
 
 private:
 	FVector Color;
-	TArray<UStaticMeshComponent*> Cubes;
+	TArray<UStaticMeshComponent *> Cubes;
 	FTimerHandle DropTimerHandle;
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FTetracubeCollisionEvent OnTetracubeCollision;

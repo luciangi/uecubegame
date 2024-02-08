@@ -6,9 +6,7 @@
 
 ADefaultPlayerController::ADefaultPlayerController()
 {
-    Score = 0;
-    Level = 0;
-    ClearedLines = 0;
+    ResetPlayerStats();
 }
 
 /** Getters and Setters */
@@ -45,44 +43,39 @@ void ADefaultPlayerController::SetClearedLines(int NewClearedLines)
 }
 
 /** Public */
+void ADefaultPlayerController::ShowPauseMenu()
+{
+    AddInputMapping(PausedInputMapping);
+    ShowWidget(PausedGameWidget);
+}
+
+void ADefaultPlayerController::HidePauseMenu()
+{
+    RemoveInputMapping(PausedInputMapping);
+    HideWidget(PausedGameWidget);
+}
+
+void ADefaultPlayerController::ShowEndMenu()
+{
+    ShowWidget(EndGameWidget);
+}
+
+void ADefaultPlayerController::HideEndMenu()
+{
+    HideWidget(EndGameWidget);
+}
+
+void ADefaultPlayerController::ResetPlayerStats()
+{
+    Score = 0;
+    Level = 0;
+    ClearedLines = 0;
+}
+
 float ADefaultPlayerController::ComputeDropSpeed()
 {
     const float DropSpeedIncrement = 0.1f;
     return FMath::Max(0.1f, 1.0f - (Level - 1) * DropSpeedIncrement);
-}
-
-void ADefaultPlayerController::ResumeGame()
-{
-    RemoveInputMapping(PausedInputMapping);
-    AddInputMapping(GameInputMapping);
-    SetGameInputMode();
-
-    PausedGameWidget->RemoveFromParent();
-}
-
-void ADefaultPlayerController::PauseGame()
-{
-    RemoveInputMapping(GameInputMapping);
-    AddInputMapping(PausedInputMapping);
-    SetMenuInputMode();
-
-    if (!PausedGameWidget)
-    {
-        PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
-    }
-    PausedGameWidget->AddToViewport();
-}
-
-void ADefaultPlayerController::EndGame()
-{
-    RemoveInputMapping(GameInputMapping);
-    SetMenuInputMode();
-
-    if (!EndGameWidget)
-    {
-        EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
-    }
-    EndGameWidget->AddToViewport();
 }
 
 /** Blueprint */
@@ -95,6 +88,10 @@ void ADefaultPlayerController::BeginPlay()
     HudWidget->SetScore(Score);
     HudWidget->SetLevel(Level);
 
+    PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
+    EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
+
+    SetGameInputMode();
     SetupInputBindings();
     AddInputMapping(GameInputMapping);
 }
@@ -125,6 +122,22 @@ void ADefaultPlayerController::RemoveInputMapping(TSoftObjectPtr<UInputMappingCo
 {
     UEnhancedInputLocalPlayerSubsystem *InputSystem = Cast<ULocalPlayer>(Player)->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
     InputSystem->RemoveMappingContext(MappingContext.LoadSynchronous());
+}
+
+void ADefaultPlayerController::ShowWidget(UUserWidget *Widget)
+{
+    RemoveInputMapping(GameInputMapping);
+    SetMenuInputMode();
+
+    Widget->AddToViewport();
+}
+
+void ADefaultPlayerController::HideWidget(UUserWidget *Widget)
+{
+    AddInputMapping(GameInputMapping);
+    SetGameInputMode();
+
+    Widget->RemoveFromParent();
 }
 
 void ADefaultPlayerController::SetMenuInputMode()

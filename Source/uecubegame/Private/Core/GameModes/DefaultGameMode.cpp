@@ -5,14 +5,25 @@
 /** Public */
 void ADefaultGameMode::PauseGame()
 {
-    PlayerController->PauseGame();
+    PlayerController->ShowPauseMenu();
     UGameplayStatics::SetGamePaused(GetGameInstance(), true);
 }
 
 void ADefaultGameMode::ResumeGame()
 {
-    PlayerController->ResumeGame();
+    PlayerController->HidePauseMenu();
     UGameplayStatics::SetGamePaused(GetGameInstance(), false);
+}
+
+void ADefaultGameMode::ResetGame()
+{
+    RestartGame();
+    PlayerController->ResetPlayerStats();
+}
+
+void ADefaultGameMode::OpenMainMenuLevel()
+{
+    UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MainMenuLevel);
 }
 
 void ADefaultGameMode::CurrentTetracubeRotate()
@@ -59,7 +70,7 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     bool IsEndGame = CheckLines->CheckOverlapWithEndLine(ActorClassFilter);
     if (IsEndGame)
     {
-        PlayerController->EndGame();
+        PlayerController->ShowEndMenu();
         return;
     }
 

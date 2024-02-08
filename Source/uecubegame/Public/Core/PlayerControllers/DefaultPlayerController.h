@@ -24,11 +24,13 @@ public:
 	void SetClearedLines(int NewClearedLines);
 
 	/** Public */
-	float ComputeDropSpeed();
+	void ShowPauseMenu();
+	void HidePauseMenu();
+	void ShowEndMenu();
+	void HideEndMenu();
 
-	void ResumeGame();
-	void PauseGame();
-	void EndGame();
+	void ResetPlayerStats();
+	float ComputeDropSpeed();
 
 protected:
 	/** Blueprint */
@@ -72,6 +74,8 @@ private:
 	void SetupInputBindings();
 	void AddInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
 	void RemoveInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
-    void SetMenuInputMode();
-    void SetGameInputMode();
+	void ShowWidget(UUserWidget *Widget);
+	void HideWidget(UUserWidget *Widget);
+	void SetMenuInputMode();
+	void SetGameInputMode();
 };
