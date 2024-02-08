@@ -25,8 +25,9 @@ public:
 
 	/** Public */
 	float ComputeDropSpeed();
-	void PauseGame();
+
 	void ResumeGame();
+	void PauseGame();
 	void EndGame();
 
 protected:
@@ -71,4 +72,6 @@ private:
 	void SetupInputBindings();
 	void AddInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
 	void RemoveInputMapping(TSoftObjectPtr<UInputMappingContext> MappingContext);
+    void SetMenuInputMode();
+    void SetGameInputMode();
 };

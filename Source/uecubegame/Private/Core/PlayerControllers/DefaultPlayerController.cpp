@@ -51,10 +51,21 @@ float ADefaultPlayerController::ComputeDropSpeed()
     return FMath::Max(0.1f, 1.0f - (Level - 1) * DropSpeedIncrement);
 }
 
+void ADefaultPlayerController::ResumeGame()
+{
+    RemoveInputMapping(PausedInputMapping);
+    AddInputMapping(GameInputMapping);
+    SetGameInputMode();
+
+    PausedGameWidget->RemoveFromParent();
+}
+
 void ADefaultPlayerController::PauseGame()
 {
     RemoveInputMapping(GameInputMapping);
     AddInputMapping(PausedInputMapping);
+    SetMenuInputMode();
+
     if (!PausedGameWidget)
     {
         PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
@@ -62,16 +73,11 @@ void ADefaultPlayerController::PauseGame()
     PausedGameWidget->AddToViewport();
 }
 
-void ADefaultPlayerController::ResumeGame()
-{
-    RemoveInputMapping(PausedInputMapping);
-    AddInputMapping(GameInputMapping);
-    PausedGameWidget->RemoveFromParent();
-}
-
 void ADefaultPlayerController::EndGame()
 {
     RemoveInputMapping(GameInputMapping);
+    SetMenuInputMode();
+
     if (!EndGameWidget)
     {
         EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
@@ -119,4 +125,19 @@ void ADefaultPlayerController::RemoveInputMapping(TSoftObjectPtr<UInputMappingCo
 {
     UEnhancedInputLocalPlayerSubsystem *InputSystem = Cast<ULocalPlayer>(Player)->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
     InputSystem->RemoveMappingContext(MappingContext.LoadSynchronous());
+}
+
+void ADefaultPlayerController::SetMenuInputMode()
+{
+    FInputModeGameAndUI InputMode;
+    SetInputMode(InputMode);
+    InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+    bShowMouseCursor = true;
+}
+
+void ADefaultPlayerController::SetGameInputMode()
+{
+    FInputModeGameOnly InputMode;
+    SetInputMode(InputMode);
+    bShowMouseCursor = false;
 }

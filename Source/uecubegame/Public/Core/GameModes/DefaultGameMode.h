@@ -13,10 +13,11 @@ class UECUBEGAME_API ADefaultGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
-    void PauseGame();
-    void ResumeGame();
-    void CurrentTetracubeRotate();
-    void CurrentTetracubeMoveLeft();
+	UFUNCTION(BlueprintCallable)
+	void ResumeGame();
+	void PauseGame();
+	void CurrentTetracubeRotate();
+	void CurrentTetracubeMoveLeft();
 	void CurrentTetracubeMoveRight();
 	void CurrentTetracubeAccelerate();
 	void CurrentTetracubeDecelerate();
@@ -45,7 +46,7 @@ private:
 
 	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
 	void StageTetracube(ATetracube *Tetracube);
-    void HandleEndGame();
-    void HandleCompletedLines(TArray<float> CompletedLinesZLocation);
-    void ComputeLevelAndScore(int CurrentClearedLines);
+	void HandleEndGame();
+	void HandleCompletedLines(TArray<float> CompletedLinesZLocation);
+	void ComputeLevelAndScore(int CurrentClearedLines);
 };
