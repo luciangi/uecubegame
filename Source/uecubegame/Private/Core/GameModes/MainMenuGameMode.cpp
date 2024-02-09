@@ -1,6 +1,6 @@
+#include "Core/GameModes/MainMenuGameMode.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
-#include "Core/GameModes/MainMenuGameMode.h"
 
 void AMainMenuGameMode::BeginPlay()
 {
