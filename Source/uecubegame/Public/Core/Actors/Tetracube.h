@@ -58,7 +58,7 @@ protected:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
 	ETetracube3DShape Shape = ETetracube3DShape::None;
 
-	virtual void OnConstruction(const FTransform &Transform) override;
+	virtual void BeginPlay() override;
 
 private:
 	FVector Color;

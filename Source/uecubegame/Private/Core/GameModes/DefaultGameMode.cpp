@@ -5,12 +5,14 @@
 /** Public */
 void ADefaultGameMode::PauseGame()
 {
+    AmbientSound->Stop();
     PlayerController->ShowPauseMenu();
     UGameplayStatics::SetGamePaused(GetGameInstance(), true);
 }
 
 void ADefaultGameMode::ResumeGame()
 {
+    AmbientSound->FadeIn(5.0f, 1.f);
     PlayerController->HidePauseMenu();
     UGameplayStatics::SetGamePaused(GetGameInstance(), false);
 }
@@ -56,6 +58,7 @@ void ADefaultGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    AmbientSound->Play();
     PlayerController = Cast<ADefaultPlayerController>(GetWorld()->GetFirstPlayerController());
     StageTetracube(SpawnNewTetracube(CurrentTetracubeSpawnLocation));
     NextTetracube = SpawnNewTetracube(NextTetracubeSpawnLocation);
@@ -70,6 +73,8 @@ void ADefaultGameMode::HandleTetracubeCollisionEvent()
     bool IsEndGame = CheckLines->CheckOverlapWithEndLine(ActorClassFilter);
     if (IsEndGame)
     {
+        AmbientSound->Stop();
+        UGameplayStatics::PlaySound2D(GetWorld(), EndGameSound);
         PlayerController->ShowEndMenu();
         return;
     }
@@ -115,13 +120,15 @@ void ADefaultGameMode::HandleCompletedLines(TArray<float> CompletedLinesZLocatio
     TArray<AActor *> AllActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACube::StaticClass(), AllActors);
 
-    for (AActor *Actor : AllActors)
+    for (float ZPosition : CompletedLinesZLocation)
     {
-        ACube *Cube = Cast<ACube>(Actor);
-        float CubeZLocation = Cube->GetActorLocation().Z;
+        UGameplayStatics::PlaySoundAtLocation(GetWorld(), CompletedLineSound, FVector(0.f, 0.f, ZPosition));
 
-        for (float ZPosition : CompletedLinesZLocation)
+        for (AActor *Actor : AllActors)
         {
+            ACube *Cube = Cast<ACube>(Actor);
+            float CubeZLocation = Cube->GetActorLocation().Z;
+
             if (CubeZLocation == ZPosition)
             {
                 Cube->Remove();
@@ -138,7 +145,7 @@ void ADefaultGameMode::HandleCompletedLines(TArray<float> CompletedLinesZLocatio
 
 void ADefaultGameMode::ComputeLevelAndScore(int ClearedLines)
 {
-    const int LinesToNextLevel = 10;
+    const int LinesToNextLevel = 5;
 
     int CurrentScore = PlayerController->GetScore();
     int CurrentLevel = PlayerController->GetLevel();

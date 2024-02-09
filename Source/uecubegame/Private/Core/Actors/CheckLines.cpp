@@ -20,9 +20,9 @@ ACheckLines::ACheckLines()
 }
 
 /** Blueprint */
-void ACheckLines::OnConstruction(const FTransform &Transform)
+void ACheckLines::BeginPlay()
 {
-	Super::OnConstruction(Transform);
+	Super::BeginPlay();
 
 	FVector BoxExtent(0.1f, 5 * CubeSize, 0.1f);
 	float ZLocation = CubeSize;

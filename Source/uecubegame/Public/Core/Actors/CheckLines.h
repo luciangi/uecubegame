@@ -24,7 +24,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSubclassOf<ACube> CubeBlueprintClass;
 
-	void OnConstruction(const FTransform &Transform);
+	virtual void BeginPlay() override;
 
 private:
 	TArray<UBoxComponent *> CompletedLinesBoxCollisionComponents;

@@ -74,9 +74,9 @@ void ATetracube::Decelerate()
 }
 
 /** Blueprint */
-void ATetracube::OnConstruction(const FTransform &Transform)
+void ATetracube::BeginPlay()
 {
-	Super::OnConstruction(Transform);
+	Super::BeginPlay();
 
 	if (Shape == ETetracube3DShape::None)
 	{

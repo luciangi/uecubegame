@@ -45,6 +45,11 @@ void ADefaultPlayerController::SetClearedLines(int NewClearedLines)
 /** Public */
 void ADefaultPlayerController::ShowPauseMenu()
 {
+    if (!PausedGameWidget)
+    {
+        PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
+    }
+
     AddInputMapping(PausedInputMapping);
     ShowWidget(PausedGameWidget);
 }
@@ -57,6 +62,11 @@ void ADefaultPlayerController::HidePauseMenu()
 
 void ADefaultPlayerController::ShowEndMenu()
 {
+    if (!EndGameWidget)
+    {
+        EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
+    }
+
     ShowWidget(EndGameWidget);
 }
 
@@ -74,7 +84,7 @@ void ADefaultPlayerController::ResetPlayerStats()
 
 float ADefaultPlayerController::ComputeDropSpeed()
 {
-    const float DropSpeedIncrement = 0.1f;
+    const float DropSpeedIncrement = 0.2f;
     return FMath::Max(0.1f, 1.0f - (Level - 1) * DropSpeedIncrement);
 }
 
@@ -87,9 +97,6 @@ void ADefaultPlayerController::BeginPlay()
     HudWidget->AddToViewport();
     HudWidget->SetScore(Score);
     HudWidget->SetLevel(Level);
-
-    PausedGameWidget = CreateWidget<UUserWidget>(GetWorld(), PausedGameWidgetClass);
-    EndGameWidget = CreateWidget<UUserWidget>(GetWorld(), EndGameWidgetClass);
 
     SetGameInputMode();
     SetupInputBindings();

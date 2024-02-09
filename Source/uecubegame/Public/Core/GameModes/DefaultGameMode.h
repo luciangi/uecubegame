@@ -2,6 +2,7 @@
 
 #include "GameFramework/GameMode.h"
 #include "Engine/LevelScriptActor.h"
+#include "Sound/AmbientSound.h"
 #include "Core/Actors/Tetracube.h"
 #include "Core/Actors/CheckLines.h"
 #include "Core/PlayerControllers/DefaultPlayerController.h"
@@ -41,6 +42,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
 	TSoftObjectPtr<ACheckLines> CheckLines;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Tetracube")
+	TSoftObjectPtr<AAmbientSound> AmbientSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Audio")
+	USoundBase *CompletedLineSound;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Audio")
+	USoundBase *EndGameSound;
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -51,7 +59,6 @@ private:
 	ATetracube *NextTetracube;
 
 	ADefaultPlayerController *PlayerController;
-
 	ATetracube *SpawnNewTetracube(FVector SpawnLocation);
 	void StageTetracube(ATetracube *Tetracube);
 	void HandleCompletedLines(TArray<float> CompletedLinesZLocation);
