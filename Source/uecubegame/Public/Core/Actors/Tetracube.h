@@ -13,10 +13,7 @@ enum class ETetracube3DShape : uint8
 	OShape,
 	SShape,
 	TShape,
-	ZShape,
-	BranchShape,
-	RightScrewShape,
-	LeftScrewShape
+	ZShape
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTetracubeCollisionEvent);
